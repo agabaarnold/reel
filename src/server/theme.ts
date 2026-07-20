@@ -8,7 +8,7 @@ export type Theme = "light" | "dark" | "system";
 const THEME_COOKIE = "theme";
 
 export const getThemeServerFn = createServerFn({ method: "GET" }).handler(
-    async () => getCookie(THEME_COOKIE) ?? "system"
+    async () => (getCookie(THEME_COOKIE) as Theme) ?? "system"
 );
 
 const themeSchema = z.enum(["light", "dark", "system"]);
