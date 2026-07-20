@@ -9,6 +9,7 @@ export const env = createEnv({
         BETTER_AUTH_URL: z.url(),
         DATABASE_URL: z.url(),
         NODE_ENV: z.enum(["development", "production"]),
+        TMDB_BASE_URL: z.url().default("https://api.themoviedb.org/3"),
         TMDB_READ_ACCESS_TOKEN: z.string(),
     },
 });
