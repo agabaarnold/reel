@@ -1,28 +1,148 @@
-import axios from "axios";
-import { env } from "#/env/backend";
+import {
+    type ConfigurationResponse,
+    configurationResponseSchema,
+} from "#/schema/configuration";
+import {
+    type DiscoverMovieParams,
+    type DiscoverMovieResponse,
+    type DiscoverTvParams,
+    type DiscoverTvResponse,
+    discoverMovieParamsSchema,
+    discoverMovieResponseSchema,
+    discoverTvParamsSchema,
+    discoverTvResponseSchema,
+} from "#/schema/discover";
+import {
+    type MovieDetails,
+    type MovieDetailsParams,
+    movieDetailsParamsSchema,
+    movieDetailsSchema,
+} from "#/schema/movies";
+import {
+    type PersonCombinedCredits,
+    type PersonCreditsParams,
+    type PersonDetails,
+    type PersonDetailsParams,
+    personCombinedCreditsSchema,
+    personCreditsParamsSchema,
+    personDetailsParamsSchema,
+    personDetailsSchema,
+} from "#/schema/person";
+import {
+    type SearchMultiResponse,
+    type SearchParams,
+    searchMultiResponseSchema,
+    searchParamsSchema,
+} from "#/schema/search";
+import {
+    type TrendingParams,
+    type TrendingResponse,
+    trendingParamsSchema,
+    trendingResponseSchema,
+} from "#/schema/trending";
+import {
+    type TvDetails,
+    type TvDetailsParams,
+    tvDetailsParamsSchema,
+    tvDetailsSchema,
+} from "#/schema/tv";
+import {
+    type WatchProviderListParams,
+    type WatchProviderListResponse,
+    watchProviderListParamsSchema,
+    watchProviderListResponseSchema,
+} from "#/schema/watch-providers";
+import tmdbClient from "./api";
 
-const tmdbClient = axios.create({
-    baseURL: env.TMDB_BASE_URL,
-    headers: { Accept: "application/json" },
-    timeout: 10_000,
-});
+// A response that fails schema validation is a signal TMDB changed
+// something upstream — better to throw loudly than serve bad data.
+async function get<T>(
+    schema: { parse: (data: unknown) => T },
+    url: string,
+    params?: Record<string, unknown>
+): Promise<T> {
+    const { data } = await tmdbClient.get(url, { params });
+    return schema.parse(data);
+}
 
-tmdbClient.interceptors.request.use((config) => {
-    const token = env.TMDB_READ_ACCESS_TOKEN;
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+export const tmdbApi = {
+    discoverMovies(
+        params: DiscoverMovieParams
+    ): Promise<DiscoverMovieResponse> {
+        const p = discoverMovieParamsSchema.parse(params);
+        return get(discoverMovieResponseSchema, "/discover/movie", p);
+    },
 
-    return config;
-});
+    discoverTv(params: DiscoverTvParams): Promise<DiscoverTvResponse> {
+        const p = discoverTvParamsSchema.parse(params);
+        return get(discoverTvResponseSchema, "/discover/tv", p);
+    },
 
-tmdbClient.interceptors.response.use(
-    (res) => res,
-    (error) => {
-        const message =
-            error.response?.data?.message ?? "Something went wrong. Try again";
-        return Promise.reject(new Error(message));
-    }
-);
+    // Cache this one indefinitely — it almost never changes
+    getConfiguration(): Promise<ConfigurationResponse> {
+        return get(configurationResponseSchema, "/configuration");
+    },
 
-export default tmdbClient;
+    getMovieDetails(params: MovieDetailsParams): Promise<MovieDetails> {
+        const p = movieDetailsParamsSchema.parse(params);
+        return get(movieDetailsSchema, `/movie/${p.movie_id}`, {
+            append_to_response:
+                p.append_to_response ??
+                "credits,videos,recommendations,similar,watch/providers",
+            language: p.language,
+        });
+    },
+
+    getPersonCombinedCredits(
+        params: PersonCreditsParams
+    ): Promise<PersonCombinedCredits> {
+        const p = personCreditsParamsSchema.parse(params);
+        return get(
+            personCombinedCreditsSchema,
+            `/person/${p.person_id}/combined_credits`,
+            { language: p.language }
+        );
+    },
+
+    getPersonDetails(params: PersonDetailsParams): Promise<PersonDetails> {
+        const p = personDetailsParamsSchema.parse(params);
+        return get(personDetailsSchema, `/person/${p.person_id}`, {
+            language: p.language,
+        });
+    },
+    getTrending(params: TrendingParams): Promise<TrendingResponse> {
+        const p = trendingParamsSchema.parse(params);
+        return get(
+            trendingResponseSchema,
+            `/trending/${p.media_type}/${p.time_window}`,
+            { page: p.page }
+        );
+    },
+
+    getTvDetails(params: TvDetailsParams): Promise<TvDetails> {
+        const p = tvDetailsParamsSchema.parse(params);
+        return get(tvDetailsSchema, `/tv/${p.series_id}`, {
+            append_to_response:
+                p.append_to_response ??
+                "credits,videos,recommendations,similar,watch/providers",
+            language: p.language,
+        });
+    },
+
+    getWatchProviderList(
+        mediaType: "movie" | "tv",
+        params: WatchProviderListParams
+    ): Promise<WatchProviderListResponse> {
+        const p = watchProviderListParamsSchema.parse(params);
+        return get(
+            watchProviderListResponseSchema,
+            `/watch/providers/${mediaType}`,
+            p
+        );
+    },
+
+    searchMulti(params: SearchParams): Promise<SearchMultiResponse> {
+        const p = searchParamsSchema.parse(params);
+        return get(searchMultiResponseSchema, "/search/multi", p);
+    },
+};
