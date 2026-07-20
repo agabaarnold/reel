@@ -7,6 +7,10 @@ import {
     Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Toaster } from "react-hot-toast";
+import Header from "#/components/shared/header";
+import { ThemeProvider } from "#/components/shared/theme-provider";
+import { getThemeServerFn } from "#/server/theme";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -36,17 +40,40 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             },
         ],
     }),
+    loader: () => getThemeServerFn(),
     shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+    const theme = Route.useLoaderData();
+
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <head>
                 <HeadContent />
+                {/* Blocking script: only matters when theme === 'system' (or cookie missing).
+            Runs before first paint, so there is nothing to "flash" from. */}
+                <script
+                    // biome-ignore lint/security/noDangerouslySetInnerHtml: Ignore
+                    dangerouslySetInnerHTML={{
+                        __html: `(function(){try{
+              var t=${JSON.stringify(theme)};
+              if(t==='system'||!t){
+                var d=window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.classList.toggle('dark', d);
+              }
+            }catch(e){}})();`,
+                    }}
+                />
             </head>
+
             <body>
-                {children}
+                <ThemeProvider initialTheme={theme}>
+                    <Header />
+                    {children}
+                    <Toaster />
+                </ThemeProvider>
+
                 <TanStackDevtools
                     config={{
                         position: "bottom-right",
