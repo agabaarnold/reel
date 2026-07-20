@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions    Session[]
+  accounts    Account[]
+  watchlist   WatchlistItem[]
+  watchedLogs WatchedLog[]
+  reviews     Review[]
+  lists       CustomList[]
+  following   Follow[]        @relation("Follower")
+  followers   Follow[]        @relation("Followee")
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model WatchlistItem {
+  id        String    @id @default(cuid())
+  userId    String
+  tmdbId    Int
+  mediaType MediaType // MOVIE | TV
+  addedAt   DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, tmdbId, mediaType])
+}
+
+model WatchedLog {
+  id         String    @id @default(cuid())
+  userId     String
+  tmdbId     Int
+  mediaType  MediaType
+  rating     Decimal?  @db.Decimal(3, 1) // 0.0–10.0
+  note       String?
+  watchedAt  DateTime  @default(now())
+  // for TV: track progress
+  seasonNum  Int?
+  episodeNum Int?
+  user       User      @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id         String     @id @default(cuid())
+  userId     String
+  tmdbId     Int
+  mediaType  MediaType
+  rating     Decimal    @db.Decimal(3, 1)
+  body       String
+  visibility Visibility @default(PUBLIC) // PUBLIC | FOLLOWERS | PRIVATE
+  createdAt  DateTime   @default(now())
+  user       User       @relation(fields: [userId], references: [id])
+}
+
+model CustomList {
+  id          String           @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  isPublic    Boolean          @default(true)
+  items       CustomListItem[]
+  user        User             @relation(fields: [userId], references: [id])
+}
+
+model CustomListItem {
+  id        String     @id @default(cuid())
+  listId    String
+  tmdbId    Int
+  mediaType MediaType
+  order     Int
+  list      CustomList @relation(fields: [listId], references: [id])
+}
+
+model Follow {
+  followerId String
+  followeeId String
+  createdAt  DateTime @default(now())
+  follower   User     @relation("Follower", fields: [followerId], references: [id])
+  followee   User     @relation("Followee", fields: [followeeId], references: [id])
+
+  @@id([followerId, followeeId])
+}
+
+enum MediaType {
+  MOVIE
+  TV
+}
+
+enum Visibility {
+  PUBLIC
+  FOLLOWERS
+  PRIVATE
+}

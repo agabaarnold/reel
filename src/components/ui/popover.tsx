@@ -1,0 +1,88 @@
+"use client";
+
+import type * as React from "react";
+import {
+    DialogTrigger,
+    type DialogTriggerProps,
+    Heading,
+    Popover as PopoverPrimitive,
+    type PopoverProps as PopoverPrimitiveProps,
+} from "react-aria-components";
+
+import { cn } from "#/lib/utils.ts";
+
+function PopoverTrigger({ children, ...props }: DialogTriggerProps) {
+    return (
+        <DialogTrigger data-slot="popover-trigger" {...props}>
+            {children}
+        </DialogTrigger>
+    );
+}
+
+function Popover({
+    className,
+    placement = "bottom",
+    offset = 4,
+    crossOffset = 0,
+    ...props
+}: Omit<PopoverPrimitiveProps, "className"> & {
+    className?: string;
+}) {
+    return (
+        <PopoverPrimitive
+            {...props}
+            className={cn(
+                "data-entering:fade-in-0 data-entering:zoom-in-95 data-exiting:fade-out-0 data-exiting:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 z-50 flex w-72 origin-(--trigger-anchor-point) flex-col gap-2.5 rounded-lg bg-popover p-2.5 text-popover-foreground text-sm shadow-md outline-hidden ring-1 ring-foreground/10 duration-100 data-entering:animate-in data-exiting:animate-out",
+                className
+            )}
+            crossOffset={crossOffset}
+            data-slot="popover-content"
+            offset={offset}
+            placement={placement}
+        />
+    );
+}
+
+function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
+    return (
+        <div
+            {...props}
+            className={cn("flex flex-col gap-0.5 text-sm", className)}
+            data-slot="popover-header"
+        />
+    );
+}
+
+function PopoverTitle({
+    className,
+    ...props
+}: React.ComponentProps<typeof Heading>) {
+    return (
+        <Heading
+            {...props}
+            className={cn("font-medium", className)}
+            data-slot="popover-title"
+        />
+    );
+}
+
+function PopoverDescription({
+    className,
+    ...props
+}: React.ComponentProps<"div">) {
+    return (
+        <div
+            {...props}
+            className={cn("text-muted-foreground", className)}
+            data-slot="popover-description"
+        />
+    );
+}
+
+export {
+    Popover,
+    PopoverDescription,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverTrigger,
+};

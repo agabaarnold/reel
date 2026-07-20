@@ -1,0 +1,30 @@
+{
+  "projectName": "reel",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "bun",
+  "includeExamples": false,
+  "tailwind": true,
+  "addOnOptions": {
+    "prisma": {
+      "database": "postgres"
+    }
+  },
+  "envVarValues": {},
+  "git": true,
+  "install": true,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "cloudflare",
+    "prisma",
+    "compiler",
+    "form",
+    "t3env",
+    "table",
+    "better-auth",
+    "tanstack-query",
+    "store"
+  ]
+}
