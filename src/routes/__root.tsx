@@ -30,6 +30,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
                 name: "viewport",
             },
             {
+                description:
+                    "One app to discover what to watch, keep a running log of what you've watched/want to watch, rate and review it, see what your friends think, and find out where to actually stream it.",
                 title: "Reel",
             },
         ],
