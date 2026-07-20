@@ -32,7 +32,7 @@ export type TrendingResponse = z.infer<typeof trendingResponseSchema>;
 /** GET /trending/{media_type}/{time_window} */
 export const trendingParamsSchema = z.object({
     media_type: z.enum(["all", "movie", "tv", "person"]),
-    page: z.number().min(1).max(1000).optional(),
+    page: z.number().int().min(1).max(500).optional(),
     time_window: z.enum(["day", "week"]),
 });
 export type TrendingParams = z.infer<typeof trendingParamsSchema>;

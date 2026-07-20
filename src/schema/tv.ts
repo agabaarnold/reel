@@ -102,6 +102,6 @@ export type TvDetailsParams = z.infer<typeof tvDetailsParamsSchema>;
 
 /** GET /tv/popular | /tv/top_rated | /tv/on_the_air | /tv/airing_today */
 export const tvListParamsSchema = baseParamsSchema.extend({
-    page: z.number().min(1).max(1000).optional(),
+    page: z.number().int().min(1).max(500).optional(),
 });
 export type TvListParams = z.infer<typeof tvListParamsSchema>;

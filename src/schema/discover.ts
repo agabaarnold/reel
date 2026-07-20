@@ -5,7 +5,7 @@ import { tvSummarySchema } from "./tv";
 
 /** GET /discover/movie */
 export const discoverMovieParamsSchema = baseParamsSchema.extend({
-    page: z.number().min(1).max(1000).optional(),
+    page: z.number().int().min(1).max(500).optional(),
     "primary_release_date.gte": z.string().optional(),
     "primary_release_date.lte": z.string().optional(),
     primary_release_year: z.number().optional(),
@@ -43,7 +43,7 @@ export const discoverTvParamsSchema = baseParamsSchema.extend({
     first_air_date_year: z.number().optional(),
     "first_air_date.gte": z.string().optional(),
     "first_air_date.lte": z.string().optional(),
-    page: z.number().min(1).max(1000).optional(),
+    page: z.number().int().min(1).max(500).optional(),
     sort_by: z
         .enum([
             "popularity.desc",

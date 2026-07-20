@@ -90,7 +90,7 @@ export type MovieDetailsParams = z.infer<typeof movieDetailsParamsSchema>;
 
 /** GET /movie/popular | /movie/top_rated | /movie/upcoming | /movie/now_playing */
 export const movieListParamsSchema = baseParamsSchema.extend({
-    page: z.number().min(1).max(1000).optional(),
+    page: z.number().int().min(1).max(500).optional(),
     region: z.string().optional(),
 });
 export type MovieListParams = z.infer<typeof movieListParamsSchema>;

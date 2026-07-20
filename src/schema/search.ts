@@ -28,7 +28,7 @@ export type SearchMultiResponse = z.infer<typeof searchMultiResponseSchema>;
 export const searchParamsSchema = baseParamsSchema.extend({
     first_air_date_year: z.number().optional(), // /search/tv only
     include_adult: z.boolean().optional(),
-    page: z.number().min(1).max(1000).optional(),
+    page: z.number().int().min(1).max(500).optional(),
     query: z.string().min(1),
     year: z.number().optional(), // /search/movie only
 });
