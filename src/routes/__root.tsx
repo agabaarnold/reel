@@ -58,10 +58,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     dangerouslySetInnerHTML={{
                         __html: `(function(){try{
               var t=${JSON.stringify(theme)};
-              if(t==='system'||!t){
-                var d=window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.classList.toggle('dark', d);
-              }
+              var resolved = (t==='system'||!t)
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : t;
+              document.documentElement.classList.toggle('dark', resolved === 'dark');
             }catch(e){}})();`,
                     }}
                 />
