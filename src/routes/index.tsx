@@ -1,14 +1,49 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PopularSection from "#/features/movies/components/popular-section";
-import { TrendingSection } from "#/features/movies/components/trending-section";
+import { z } from "zod";
+import FeaturedCarousel from "#/components/shared/featured-carousel";
+import { trendingOptions, useTrending } from "#/server/queries";
 
-export const Route = createFileRoute("/")({ component: Home });
+const homeSearchSchema = z.object({
+    page: z.number().int().positive().default(1),
+    timeWindow: z.enum(["day", "week"]).default("day"),
+});
+
+// biome-ignore assist/source/useSortedKeys: Thats the expected order
+export const Route = createFileRoute("/")({
+    component: Home,
+    loaderDeps: ({ search }) => search,
+    loader: async ({ context, deps }) => {
+        const { queryClient } = context;
+        await Promise.all([
+            queryClient.prefetchQuery(
+                trendingOptions({
+                    media_type: "all",
+                    page: deps.page,
+                    time_window: deps.timeWindow,
+                })
+            ),
+        ]);
+    },
+    validateSearch: homeSearchSchema,
+});
 
 function Home() {
+    const { page, timeWindow } = Route.useLoaderDeps();
+    const { data, isLoading, isError } = useTrending({
+        media_type: "all",
+        page,
+        time_window: timeWindow,
+    });
+
+    const trending = data.results;
+
     return (
-        <div className="mx-auto max-w-6xl px-6 py-8">
-            <TrendingSection />
-            <PopularSection />
+        <div className="">
+            <FeaturedCarousel
+                isError={isError}
+                isLoading={isLoading}
+                media={trending}
+            />
         </div>
     );
 }
