@@ -28,7 +28,7 @@ export const TrendingSection = () => {
                 </p>
             ) : null}
 
-            <div className="flex gap-4 overflow-x-auto pb-2">
+            <div className="scrollbar-none flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {isLoading
                     ? Array.from({ length: TRENDING_CARD_COUNT }).map(
                           (_, index) => (
