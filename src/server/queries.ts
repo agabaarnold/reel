@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import type { DiscoverMovieParams, DiscoverTvParams } from "#/schema/discover";
 import type { MovieDetailsParams } from "#/schema/movies";
 import type { SearchParams } from "#/schema/search";
@@ -22,7 +22,7 @@ import {
  * validated against the same Zod schemas used server-side.
  *
  * queryOptions() (TanStack Query v5) lets you reuse the same options
- * object for useQuery, prefetchQuery, and ensureQueryData.
+ * object for useSuspenseQuery, prefetchQuery, and ensureQueryData.
  */
 
 export const tmdbKeys = {
@@ -52,7 +52,7 @@ export function trendingOptions(params: TrendingParams) {
     });
 }
 export const useTrending = (params: TrendingParams) =>
-    useQuery(trendingOptions(params));
+    useSuspenseQuery(trendingOptions(params));
 
 export function searchMultiOptions(params: SearchParams) {
     return queryOptions({
@@ -63,7 +63,7 @@ export function searchMultiOptions(params: SearchParams) {
     });
 }
 export const useSearchMulti = (params: SearchParams) =>
-    useQuery(searchMultiOptions(params));
+    useSuspenseQuery(searchMultiOptions(params));
 
 export function movieDetailsOptions(params: MovieDetailsParams) {
     return queryOptions({
@@ -73,7 +73,7 @@ export function movieDetailsOptions(params: MovieDetailsParams) {
     });
 }
 export const useMovieDetails = (params: MovieDetailsParams) =>
-    useQuery(movieDetailsOptions(params));
+    useSuspenseQuery(movieDetailsOptions(params));
 
 export function tvDetailsOptions(params: TvDetailsParams) {
     return queryOptions({
@@ -83,7 +83,7 @@ export function tvDetailsOptions(params: TvDetailsParams) {
     });
 }
 export const useTvDetails = (params: TvDetailsParams) =>
-    useQuery(tvDetailsOptions(params));
+    useSuspenseQuery(tvDetailsOptions(params));
 
 export function discoverMoviesOptions(params: DiscoverMovieParams) {
     return queryOptions({
@@ -93,7 +93,7 @@ export function discoverMoviesOptions(params: DiscoverMovieParams) {
     });
 }
 export const useDiscoverMovies = (params: DiscoverMovieParams) =>
-    useQuery(discoverMoviesOptions(params));
+    useSuspenseQuery(discoverMoviesOptions(params));
 
 export function discoverTvOptions(params: DiscoverTvParams) {
     return queryOptions({
@@ -103,7 +103,7 @@ export function discoverTvOptions(params: DiscoverTvParams) {
     });
 }
 export const useDiscoverTv = (params: DiscoverTvParams) =>
-    useQuery(discoverTvOptions(params));
+    useSuspenseQuery(discoverTvOptions(params));
 
 export function personDetailsOptions(personId: number) {
     return queryOptions({
@@ -113,7 +113,7 @@ export function personDetailsOptions(personId: number) {
     });
 }
 export const usePersonDetails = (personId: number) =>
-    useQuery(personDetailsOptions(personId));
+    useSuspenseQuery(personDetailsOptions(personId));
 
 export function personCreditsOptions(personId: number) {
     return queryOptions({
@@ -123,7 +123,7 @@ export function personCreditsOptions(personId: number) {
     });
 }
 export const usePersonCredits = (personId: number) =>
-    useQuery(personCreditsOptions(personId));
+    useSuspenseQuery(personCreditsOptions(personId));
 
 export function configurationOptions() {
     return queryOptions({
@@ -132,4 +132,4 @@ export function configurationOptions() {
         staleTime: Number.POSITIVE_INFINITY, // fetch once per session, effectively static
     });
 }
-export const useConfiguration = () => useQuery(configurationOptions());
+export const useConfiguration = () => useSuspenseQuery(configurationOptions());
