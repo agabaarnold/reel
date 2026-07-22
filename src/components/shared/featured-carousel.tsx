@@ -34,10 +34,7 @@ const getFeaturedTitle = (item: FeaturedMedia): string =>
     item.media_type === "movie" ? item.title : item.name;
 
 const getFeaturedYear = (item: FeaturedMedia): string =>
-    (item.media_type === "movie"
-        ? item.release_date
-        : item.first_air_date
-    ).slice(0, 4);
+    releaseYear(item.media_type === "movie" ? item.release_date : item.first_air_date);
 
 interface CarouselIndicatorProps {
     api: CarouselApi | undefined;
