@@ -1,6 +1,7 @@
 import { IconPhotoOff, IconStarFilled } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { type FocusEvent, useCallback, useEffect, useState } from "react";
+import { releaseYear } from "#/lib/utils";
 import { buildImageUrl } from "#/schema/configuration";
 import type { TrendingItem, TrendingResponse } from "#/schema/trending";
 import { useConfiguration } from "#/server/queries";
@@ -34,7 +35,9 @@ const getFeaturedTitle = (item: FeaturedMedia): string =>
     item.media_type === "movie" ? item.title : item.name;
 
 const getFeaturedYear = (item: FeaturedMedia): string =>
-    releaseYear(item.media_type === "movie" ? item.release_date : item.first_air_date);
+    releaseYear(
+        item.media_type === "movie" ? item.release_date : item.first_air_date
+    );
 
 interface CarouselIndicatorProps {
     api: CarouselApi | undefined;
@@ -71,8 +74,27 @@ const FeaturedCarousel = ({
 }: FeaturedCarouselProps) => {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
     const { data: configuration } = useConfiguration();
     const featuredMedia = media.filter(isFeaturedMedia);
+    const handleCarouselBlur = useCallback(
+        (event: FocusEvent<HTMLDivElement>) => {
+            if (
+                event.relatedTarget instanceof Node &&
+                event.currentTarget.contains(event.relatedTarget)
+            ) {
+                return;
+            }
+
+            setIsFocused(false);
+        },
+        []
+    );
+    const handleCarouselFocus = useCallback(() => setIsFocused(true), []);
+    const handleCarouselMouseEnter = useCallback(() => setIsHovered(true), []);
+    const handleCarouselMouseLeave = useCallback(() => setIsHovered(false), []);
 
     useEffect(() => {
         if (!api) {
@@ -92,7 +114,31 @@ const FeaturedCarousel = ({
     }, [api]);
 
     useEffect(() => {
-        if (!(api && featuredMedia.length > 1)) {
+        const mediaQuery = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        );
+        const handleMotionPreferenceChange = () => {
+            setPrefersReducedMotion(mediaQuery.matches);
+        };
+
+        handleMotionPreferenceChange();
+        mediaQuery.addEventListener("change", handleMotionPreferenceChange);
+
+        return () => {
+            mediaQuery.removeEventListener(
+                "change",
+                handleMotionPreferenceChange
+            );
+        };
+    }, []);
+
+    useEffect(() => {
+        if (
+            !(api && featuredMedia.length > 1) ||
+            isHovered ||
+            isFocused ||
+            prefersReducedMotion
+        ) {
             return;
         }
 
@@ -101,12 +147,10 @@ const FeaturedCarousel = ({
         }, AUTOPLAY_DELAY_MS);
 
         return () => window.clearInterval(autoplayInterval);
-    }, [api, featuredMedia.length]);
+    }, [api, featuredMedia.length, isFocused, isHovered, prefersReducedMotion]);
 
     if (isLoading) {
-        return (
-            <Skeleton className="h-[clamp(18rem,60vw,34rem)] w-full" />
-        );
+        return <Skeleton className="h-[clamp(18rem,60vw,34rem)] w-full" />;
     }
 
     if (isError || featuredMedia.length === 0) {
@@ -121,6 +165,10 @@ const FeaturedCarousel = ({
         <section className="w-full">
             <Carousel
                 className="w-full"
+                onBlurCapture={handleCarouselBlur}
+                onFocusCapture={handleCarouselFocus}
+                onMouseEnter={handleCarouselMouseEnter}
+                onMouseLeave={handleCarouselMouseLeave}
                 opts={{ align: "start", loop: true }}
                 setApi={setApi}
             >
