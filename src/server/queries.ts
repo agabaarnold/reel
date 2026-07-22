@@ -1,28 +1,18 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import type { DiscoverMovieParams, DiscoverTvParams } from "#/schema/discover";
-import type { MovieDetailsParams, MovieListParams } from "#/schema/movies";
-import type { PersonListParams } from "#/schema/person";
+import type { MovieDetailsParams } from "#/schema/movies";
 import type { SearchParams } from "#/schema/search";
 import type { TrendingParams } from "#/schema/trending";
-import type { TvDetailsParams, TvListParams } from "#/schema/tv";
+import type { TvDetailsParams } from "#/schema/tv";
 import {
     discoverMoviesFn,
     discoverTvFn,
-    getAiringTodayTvFn,
     getConfigurationFn,
     getMovieDetailsFn,
-    getNowPlayingMoviesFn,
-    getOnTheAirTvFn,
     getPersonCreditsFn,
     getPersonDetailsFn,
-    getPopularMoviesFn,
-    getPopularPeopleFn,
-    getPopularTvFn,
-    getTopRatedMoviesFn,
-    getTopRatedTvFn,
     getTrendingFn,
     getTvDetailsFn,
-    getUpcomingMoviesFn,
     searchMultiFn,
 } from "./tmdb-server";
 
@@ -44,27 +34,15 @@ export const tmdbKeys = {
         [...tmdbKeys.all, "discover-tv", params] as const,
     movie: (params: MovieDetailsParams) =>
         [...tmdbKeys.all, "movie", params] as const,
-    movieList: (
-        category: "now-playing" | "popular" | "top-rated" | "upcoming",
-        params: MovieListParams
-    ) => [...tmdbKeys.all, "movie-list", category, params] as const,
     person: (id: number) => [...tmdbKeys.all, "person", id] as const,
     personCredits: (id: number) =>
         [...tmdbKeys.all, "person-credits", id] as const,
-    popularPeople: (params: PersonListParams) =>
-        [...tmdbKeys.all, "popular-people", params] as const,
     search: (params: SearchParams) =>
         [...tmdbKeys.all, "search", params] as const,
     trending: (params: TrendingParams) =>
         [...tmdbKeys.all, "trending", params] as const,
     tv: (params: TvDetailsParams) => [...tmdbKeys.all, "tv", params] as const,
-    tvList: (
-        category: "airing-today" | "on-the-air" | "popular" | "top-rated",
-        params: TvListParams
-    ) => [...tmdbKeys.all, "tv-list", category, params] as const,
 };
-
-const LIST_STALE_TIME = 30 * 60 * 1000;
 
 export function trendingOptions(params: TrendingParams) {
     return queryOptions({
@@ -126,96 +104,6 @@ export function discoverTvOptions(params: DiscoverTvParams) {
 }
 export const useDiscoverTv = (params: DiscoverTvParams) =>
     useSuspenseQuery(discoverTvOptions(params));
-
-export function upcomingMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getUpcomingMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("upcoming", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const useUpcomingMovies = (params: MovieListParams = {}) =>
-    useSuspenseQuery(upcomingMoviesOptions(params));
-
-export function popularMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getPopularMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("popular", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const usePopularMovies = (params: MovieListParams = {}) =>
-    useSuspenseQuery(popularMoviesOptions(params));
-
-export function topRatedMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getTopRatedMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("top-rated", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const useTopRatedMovies = (params: MovieListParams = {}) =>
-    useSuspenseQuery(topRatedMoviesOptions(params));
-
-export function nowPlayingMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getNowPlayingMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("now-playing", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const useNowPlayingMovies = (params: MovieListParams = {}) =>
-    useSuspenseQuery(nowPlayingMoviesOptions(params));
-
-export function airingTodayTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getAiringTodayTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("airing-today", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const useAiringTodayTv = (params: TvListParams = {}) =>
-    useSuspenseQuery(airingTodayTvOptions(params));
-
-export function onTheAirTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getOnTheAirTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("on-the-air", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const useOnTheAirTv = (params: TvListParams = {}) =>
-    useSuspenseQuery(onTheAirTvOptions(params));
-
-export function popularTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getPopularTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("popular", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const usePopularTv = (params: TvListParams = {}) =>
-    useSuspenseQuery(popularTvOptions(params));
-
-export function topRatedTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getTopRatedTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("top-rated", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const useTopRatedTv = (params: TvListParams = {}) =>
-    useSuspenseQuery(topRatedTvOptions(params));
-
-export function popularPeopleOptions(params: PersonListParams = {}) {
-    return queryOptions({
-        queryFn: () => getPopularPeopleFn({ data: params }),
-        queryKey: tmdbKeys.popularPeople(params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
-export const usePopularPeople = (params: PersonListParams = {}) =>
-    useSuspenseQuery(popularPeopleOptions(params));
 
 export function personDetailsOptions(personId: number) {
     return queryOptions({
