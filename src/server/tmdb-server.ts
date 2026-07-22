@@ -55,21 +55,45 @@ export const getMovieDetailsFn = createServerFn({
         return movieDetailsSchema.parse(result);
     });
 
-function createMovieListFn(
-    category: "now_playing" | "popular" | "top_rated" | "upcoming"
-) {
-    return createServerFn({ method: "GET", strict: false })
-        .validator((data: unknown) => movieListParamsSchema.parse(data))
-        .handler(async ({ data }) => {
-            const result = await tmdbApi.getMovieList(category, data);
-            return movieListResponseSchema.parse(result);
-        });
-}
+export const getNowPlayingMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("now_playing", data);
+        return movieListResponseSchema.parse(result);
+    });
 
-export const getNowPlayingMoviesFn = createMovieListFn("now_playing");
-export const getPopularMoviesFn = createMovieListFn("popular");
-export const getTopRatedMoviesFn = createMovieListFn("top_rated");
-export const getUpcomingMoviesFn = createMovieListFn("upcoming");
+export const getPopularMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("popular", data);
+        return movieListResponseSchema.parse(result);
+    });
+
+export const getTopRatedMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("top_rated", data);
+        return movieListResponseSchema.parse(result);
+    });
+
+export const getUpcomingMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("upcoming", data);
+        return movieListResponseSchema.parse(result);
+    });
 
 export const getTvDetailsFn = createServerFn({ method: "GET", strict: false })
     .validator((data: unknown) => tvDetailsParamsSchema.parse(data))
@@ -78,21 +102,45 @@ export const getTvDetailsFn = createServerFn({ method: "GET", strict: false })
         return tvDetailsSchema.parse(result);
     });
 
-function createTvListFn(
-    category: "airing_today" | "on_the_air" | "popular" | "top_rated"
-) {
-    return createServerFn({ method: "GET", strict: false })
-        .validator((data: unknown) => tvListParamsSchema.parse(data))
-        .handler(async ({ data }) => {
-            const result = await tmdbApi.getTvList(category, data);
-            return tvListResponseSchema.parse(result);
-        });
-}
+export const getAiringTodayTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("airing_today", data);
+        return tvListResponseSchema.parse(result);
+    });
 
-export const getAiringTodayTvFn = createTvListFn("airing_today");
-export const getOnTheAirTvFn = createTvListFn("on_the_air");
-export const getPopularTvFn = createTvListFn("popular");
-export const getTopRatedTvFn = createTvListFn("top_rated");
+export const getOnTheAirTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("on_the_air", data);
+        return tvListResponseSchema.parse(result);
+    });
+
+export const getPopularTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("popular", data);
+        return tvListResponseSchema.parse(result);
+    });
+
+export const getTopRatedTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("top_rated", data);
+        return tvListResponseSchema.parse(result);
+    });
 
 export const discoverMoviesFn = createServerFn({ method: "GET", strict: false })
     .validator((data: unknown) => discoverMovieParamsSchema.parse(data))
