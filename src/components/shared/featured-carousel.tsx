@@ -13,7 +13,6 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "../ui/carousel";
-import { Skeleton } from "../ui/skeleton";
 
 const BACKDROP_HEIGHT = 720;
 const BACKDROP_SIZE = "w1280";
@@ -23,8 +22,6 @@ const AUTOPLAY_DELAY_MS = 10_000;
 type FeaturedMedia = Extract<TrendingItem, { media_type: "movie" | "tv" }>;
 
 interface FeaturedCarouselProps {
-    isError: boolean;
-    isLoading: boolean;
     media: TrendingResponse["results"];
 }
 
@@ -67,11 +64,7 @@ const CarouselIndicator = ({
     );
 };
 
-const FeaturedCarousel = ({
-    media,
-    isLoading,
-    isError,
-}: FeaturedCarouselProps) => {
+const FeaturedCarousel = ({ media }: FeaturedCarouselProps) => {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
@@ -149,11 +142,7 @@ const FeaturedCarousel = ({
         return () => window.clearInterval(autoplayInterval);
     }, [api, featuredMedia.length, isFocused, isHovered, prefersReducedMotion]);
 
-    if (isLoading) {
-        return <Skeleton className="h-[clamp(18rem,60vw,34rem)] w-full" />;
-    }
-
-    if (isError || featuredMedia.length === 0) {
+    if (featuredMedia.length === 0) {
         return (
             <div className="rounded-3xl border bg-muted p-6 text-muted-foreground text-sm">
                 Unable to load featured titles.

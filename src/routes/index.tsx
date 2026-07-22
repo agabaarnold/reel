@@ -60,7 +60,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
     const { page, timeWindow } = Route.useLoaderDeps();
-    const { data, isLoading, isError } = useTrending({
+    const { data } = useTrending({
         media_type: "all",
         page,
         time_window: timeWindow,
@@ -78,11 +78,7 @@ function Home() {
 
     return (
         <main className="pb-16">
-            <FeaturedCarousel
-                isError={isError}
-                isLoading={isLoading}
-                media={trending}
-            />
+            <FeaturedCarousel media={trending} />
 
             <div className="mx-auto flex max-w-7xl flex-col gap-12 px-4 py-12 sm:px-6 lg:px-8">
                 <ContentRow id="now-playing" title="Now Playing">
