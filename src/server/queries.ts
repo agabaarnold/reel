@@ -123,83 +123,89 @@ export function discoverTvOptions(params: DiscoverTvParams) {
 export const useDiscoverTv = (params: DiscoverTvParams) =>
     useSuspenseQuery(discoverTvOptions(params));
 
-export function nowPlayingMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getNowPlayingMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("now-playing", params),
-        staleTime: LIST_STALE_TIME,
-    });
+type ListKeyBuilder<TParams, TCategory extends string> = (
+    category: TCategory,
+    params: TParams
+) => readonly unknown[];
+
+function createListOptions<
+    TParams extends object,
+    TData,
+    TCategory extends string,
+>(
+    fetcher: (params: TParams) => Promise<TData>,
+    category: TCategory,
+    keyBuilder: ListKeyBuilder<TParams, TCategory>
+) {
+    return (params: TParams = {} as TParams) =>
+        queryOptions({
+            queryFn: () => fetcher(params),
+            queryKey: keyBuilder(category, params),
+            staleTime: LIST_STALE_TIME,
+        });
 }
+
+export const nowPlayingMoviesOptions = createListOptions(
+    (params: MovieListParams) => getNowPlayingMoviesFn({ data: params }),
+    "now-playing",
+    tmdbKeys.movieList
+);
 export const useNowPlayingMovies = (params: MovieListParams = {}) =>
     useSuspenseQuery(nowPlayingMoviesOptions(params));
 
-export function popularMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getPopularMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("popular", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const popularMoviesOptions = createListOptions(
+    (params: MovieListParams) => getPopularMoviesFn({ data: params }),
+    "popular",
+    tmdbKeys.movieList
+);
 export const usePopularMovies = (params: MovieListParams = {}) =>
     useSuspenseQuery(popularMoviesOptions(params));
 
-export function topRatedMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getTopRatedMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("top-rated", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const topRatedMoviesOptions = createListOptions(
+    (params: MovieListParams) => getTopRatedMoviesFn({ data: params }),
+    "top-rated",
+    tmdbKeys.movieList
+);
 export const useTopRatedMovies = (params: MovieListParams = {}) =>
     useSuspenseQuery(topRatedMoviesOptions(params));
 
-export function upcomingMoviesOptions(params: MovieListParams = {}) {
-    return queryOptions({
-        queryFn: () => getUpcomingMoviesFn({ data: params }),
-        queryKey: tmdbKeys.movieList("upcoming", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const upcomingMoviesOptions = createListOptions(
+    (params: MovieListParams) => getUpcomingMoviesFn({ data: params }),
+    "upcoming",
+    tmdbKeys.movieList
+);
 export const useUpcomingMovies = (params: MovieListParams = {}) =>
     useSuspenseQuery(upcomingMoviesOptions(params));
 
-export function airingTodayTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getAiringTodayTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("airing-today", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const airingTodayTvOptions = createListOptions(
+    (params: TvListParams) => getAiringTodayTvFn({ data: params }),
+    "airing-today",
+    tmdbKeys.tvList
+);
 export const useAiringTodayTv = (params: TvListParams = {}) =>
     useSuspenseQuery(airingTodayTvOptions(params));
 
-export function onTheAirTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getOnTheAirTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("on-the-air", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const onTheAirTvOptions = createListOptions(
+    (params: TvListParams) => getOnTheAirTvFn({ data: params }),
+    "on-the-air",
+    tmdbKeys.tvList
+);
 export const useOnTheAirTv = (params: TvListParams = {}) =>
     useSuspenseQuery(onTheAirTvOptions(params));
 
-export function popularTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getPopularTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("popular", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const popularTvOptions = createListOptions(
+    (params: TvListParams) => getPopularTvFn({ data: params }),
+    "popular",
+    tmdbKeys.tvList
+);
 export const usePopularTv = (params: TvListParams = {}) =>
     useSuspenseQuery(popularTvOptions(params));
 
-export function topRatedTvOptions(params: TvListParams = {}) {
-    return queryOptions({
-        queryFn: () => getTopRatedTvFn({ data: params }),
-        queryKey: tmdbKeys.tvList("top-rated", params),
-        staleTime: LIST_STALE_TIME,
-    });
-}
+export const topRatedTvOptions = createListOptions(
+    (params: TvListParams) => getTopRatedTvFn({ data: params }),
+    "top-rated",
+    tmdbKeys.tvList
+);
 export const useTopRatedTv = (params: TvListParams = {}) =>
     useSuspenseQuery(topRatedTvOptions(params));
 
