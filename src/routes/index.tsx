@@ -26,8 +26,8 @@ import {
 } from "#/server/queries";
 
 const homeSearchSchema = z.object({
-    page: z.number().int().positive().default(1),
-    timeWindow: z.enum(["day", "week"]).default("day"),
+    page: z.number().int().positive().default(1).catch(1),
+    timeWindow: z.enum(["day", "week"]).default("day").catch("day"),
 });
 
 // biome-ignore assist/source/useSortedKeys: Thats the expected order
