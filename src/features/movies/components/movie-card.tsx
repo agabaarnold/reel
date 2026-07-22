@@ -8,8 +8,10 @@ interface MovieCardProps {
     width: string;
 }
 
+import { Link } from "`@tanstack/react-router`";
+
 const MovieCard = ({ movie, width }: MovieCardProps) => (
-    <div className={width}>
+    <Link className={width} params={{ movieId: movie.id }} to="/movie/$movieId">
         <PosterImage alt={movie.title} path={movie.poster_path} />
 
         <p className="mt-2 truncate font-medium text-sm">{movie.title}</p>
@@ -24,7 +26,7 @@ const MovieCard = ({ movie, width }: MovieCardProps) => (
             <span aria-hidden="true">&middot;</span>
             <span>{releaseYear(movie.release_date)}</span>
         </div>
-    </div>
+    </Link>
 );
 
 export default MovieCard;
