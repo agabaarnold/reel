@@ -18,6 +18,12 @@ export type PersonSummary = z.infer<typeof personSummarySchema>;
 export const personListResponseSchema = paginatedSchema(personSummarySchema);
 export type PersonListResponse = z.infer<typeof personListResponseSchema>;
 
+/** GET /person/popular */
+export const personListParamsSchema = baseParamsSchema.extend({
+    page: z.number().int().min(1).max(500).optional(),
+});
+export type PersonListParams = z.infer<typeof personListParamsSchema>;
+
 export const personDetailsSchema = z.object({
     adult: z.boolean(),
     also_known_as: z.array(z.string()),

@@ -15,18 +15,26 @@ import {
 import {
     type MovieDetails,
     type MovieDetailsParams,
+    type MovieListParams,
+    type MovieListResponse,
     movieDetailsParamsSchema,
     movieDetailsSchema,
+    movieListParamsSchema,
+    movieListResponseSchema,
 } from "#/schema/movies";
 import {
     type PersonCombinedCredits,
     type PersonCreditsParams,
     type PersonDetails,
     type PersonDetailsParams,
+    type PersonListParams,
+    type PersonListResponse,
     personCombinedCreditsSchema,
     personCreditsParamsSchema,
     personDetailsParamsSchema,
     personDetailsSchema,
+    personListParamsSchema,
+    personListResponseSchema,
 } from "#/schema/person";
 import {
     type SearchMultiResponse,
@@ -43,8 +51,12 @@ import {
 import {
     type TvDetails,
     type TvDetailsParams,
+    type TvListParams,
+    type TvListResponse,
     tvDetailsParamsSchema,
     tvDetailsSchema,
+    tvListParamsSchema,
+    tvListResponseSchema,
 } from "#/schema/tv";
 import {
     type WatchProviderListParams,
@@ -93,6 +105,14 @@ export const tmdbApi = {
         });
     },
 
+    getMovieList(
+        category: "now_playing" | "popular" | "top_rated" | "upcoming",
+        params: MovieListParams
+    ): Promise<MovieListResponse> {
+        const p = movieListParamsSchema.parse(params);
+        return get(movieListResponseSchema, `/movie/${category}`, p);
+    },
+
     getPersonCombinedCredits(
         params: PersonCreditsParams
     ): Promise<PersonCombinedCredits> {
@@ -109,6 +129,11 @@ export const tmdbApi = {
         return get(personDetailsSchema, `/person/${p.person_id}`, {
             language: p.language,
         });
+    },
+
+    getPopularPeople(params: PersonListParams): Promise<PersonListResponse> {
+        const p = personListParamsSchema.parse(params);
+        return get(personListResponseSchema, "/person/popular", p);
     },
     getTrending(params: TrendingParams): Promise<TrendingResponse> {
         const p = trendingParamsSchema.parse(params);
@@ -127,6 +152,14 @@ export const tmdbApi = {
                 "credits,videos,recommendations,similar,watch/providers",
             language: p.language,
         });
+    },
+
+    getTvList(
+        category: "airing_today" | "on_the_air" | "popular" | "top_rated",
+        params: TvListParams
+    ): Promise<TvListResponse> {
+        const p = tvListParamsSchema.parse(params);
+        return get(tvListResponseSchema, `/tv/${category}`, p);
     },
 
     getWatchProviderList(
