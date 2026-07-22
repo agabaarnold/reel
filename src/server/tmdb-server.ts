@@ -6,7 +6,12 @@ import {
     discoverTvParamsSchema,
     discoverTvResponseSchema,
 } from "#/schema/discover";
-import { movieDetailsParamsSchema, movieDetailsSchema } from "#/schema/movies";
+import {
+    movieDetailsParamsSchema,
+    movieDetailsSchema,
+    movieListParamsSchema,
+    movieListResponseSchema,
+} from "#/schema/movies";
 import {
     personCombinedCreditsSchema,
     personCreditsParamsSchema,
@@ -18,7 +23,12 @@ import {
     trendingParamsSchema,
     trendingResponseSchema,
 } from "#/schema/trending";
-import { tvDetailsParamsSchema, tvDetailsSchema } from "#/schema/tv";
+import {
+    tvDetailsParamsSchema,
+    tvDetailsSchema,
+    tvListParamsSchema,
+    tvListResponseSchema,
+} from "#/schema/tv";
 import { tmdbApi } from "./tmdb";
 
 export const getTrendingFn = createServerFn({ method: "GET", strict: false })
@@ -45,11 +55,91 @@ export const getMovieDetailsFn = createServerFn({
         return movieDetailsSchema.parse(result);
     });
 
+export const getNowPlayingMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("now_playing", data);
+        return movieListResponseSchema.parse(result);
+    });
+
+export const getPopularMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("popular", data);
+        return movieListResponseSchema.parse(result);
+    });
+
+export const getTopRatedMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("top_rated", data);
+        return movieListResponseSchema.parse(result);
+    });
+
+export const getUpcomingMoviesFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => movieListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getMovieList("upcoming", data);
+        return movieListResponseSchema.parse(result);
+    });
+
 export const getTvDetailsFn = createServerFn({ method: "GET", strict: false })
     .validator((data: unknown) => tvDetailsParamsSchema.parse(data))
     .handler(async ({ data }) => {
         const result = await tmdbApi.getTvDetails(data);
         return tvDetailsSchema.parse(result);
+    });
+
+export const getAiringTodayTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("airing_today", data);
+        return tvListResponseSchema.parse(result);
+    });
+
+export const getOnTheAirTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("on_the_air", data);
+        return tvListResponseSchema.parse(result);
+    });
+
+export const getPopularTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("popular", data);
+        return tvListResponseSchema.parse(result);
+    });
+
+export const getTopRatedTvFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvListParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvList("top_rated", data);
+        return tvListResponseSchema.parse(result);
     });
 
 export const discoverMoviesFn = createServerFn({ method: "GET", strict: false })

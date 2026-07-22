@@ -1,18 +1,26 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import type { DiscoverMovieParams, DiscoverTvParams } from "#/schema/discover";
-import type { MovieDetailsParams } from "#/schema/movies";
+import type { MovieDetailsParams, MovieListParams } from "#/schema/movies";
 import type { SearchParams } from "#/schema/search";
 import type { TrendingParams } from "#/schema/trending";
-import type { TvDetailsParams } from "#/schema/tv";
+import type { TvDetailsParams, TvListParams } from "#/schema/tv";
 import {
     discoverMoviesFn,
     discoverTvFn,
+    getAiringTodayTvFn,
     getConfigurationFn,
     getMovieDetailsFn,
+    getNowPlayingMoviesFn,
+    getOnTheAirTvFn,
     getPersonCreditsFn,
     getPersonDetailsFn,
+    getPopularMoviesFn,
+    getPopularTvFn,
+    getTopRatedMoviesFn,
+    getTopRatedTvFn,
     getTrendingFn,
     getTvDetailsFn,
+    getUpcomingMoviesFn,
     searchMultiFn,
 } from "./tmdb-server";
 
@@ -22,7 +30,7 @@ import {
  * validated against the same Zod schemas used server-side.
  *
  * queryOptions() (TanStack Query v5) lets you reuse the same options
- * object for useQuery, prefetchQuery, and ensureQueryData.
+ * object for useSuspenseQuery, prefetchQuery, and ensureQueryData.
  */
 
 export const tmdbKeys = {
@@ -34,6 +42,10 @@ export const tmdbKeys = {
         [...tmdbKeys.all, "discover-tv", params] as const,
     movie: (params: MovieDetailsParams) =>
         [...tmdbKeys.all, "movie", params] as const,
+    movieList: (
+        category: "now-playing" | "popular" | "top-rated" | "upcoming",
+        params: MovieListParams
+    ) => [...tmdbKeys.all, "movie-list", category, params] as const,
     person: (id: number) => [...tmdbKeys.all, "person", id] as const,
     personCredits: (id: number) =>
         [...tmdbKeys.all, "person-credits", id] as const,
@@ -42,7 +54,13 @@ export const tmdbKeys = {
     trending: (params: TrendingParams) =>
         [...tmdbKeys.all, "trending", params] as const,
     tv: (params: TvDetailsParams) => [...tmdbKeys.all, "tv", params] as const,
+    tvList: (
+        category: "airing-today" | "on-the-air" | "popular" | "top-rated",
+        params: TvListParams
+    ) => [...tmdbKeys.all, "tv-list", category, params] as const,
 };
+
+const LIST_STALE_TIME = 30 * 60 * 1000;
 
 export function trendingOptions(params: TrendingParams) {
     return queryOptions({
@@ -52,7 +70,7 @@ export function trendingOptions(params: TrendingParams) {
     });
 }
 export const useTrending = (params: TrendingParams) =>
-    useQuery(trendingOptions(params));
+    useSuspenseQuery(trendingOptions(params));
 
 export function searchMultiOptions(params: SearchParams) {
     return queryOptions({
@@ -63,7 +81,7 @@ export function searchMultiOptions(params: SearchParams) {
     });
 }
 export const useSearchMulti = (params: SearchParams) =>
-    useQuery(searchMultiOptions(params));
+    useSuspenseQuery(searchMultiOptions(params));
 
 export function movieDetailsOptions(params: MovieDetailsParams) {
     return queryOptions({
@@ -73,7 +91,7 @@ export function movieDetailsOptions(params: MovieDetailsParams) {
     });
 }
 export const useMovieDetails = (params: MovieDetailsParams) =>
-    useQuery(movieDetailsOptions(params));
+    useSuspenseQuery(movieDetailsOptions(params));
 
 export function tvDetailsOptions(params: TvDetailsParams) {
     return queryOptions({
@@ -83,7 +101,7 @@ export function tvDetailsOptions(params: TvDetailsParams) {
     });
 }
 export const useTvDetails = (params: TvDetailsParams) =>
-    useQuery(tvDetailsOptions(params));
+    useSuspenseQuery(tvDetailsOptions(params));
 
 export function discoverMoviesOptions(params: DiscoverMovieParams) {
     return queryOptions({
@@ -93,7 +111,7 @@ export function discoverMoviesOptions(params: DiscoverMovieParams) {
     });
 }
 export const useDiscoverMovies = (params: DiscoverMovieParams) =>
-    useQuery(discoverMoviesOptions(params));
+    useSuspenseQuery(discoverMoviesOptions(params));
 
 export function discoverTvOptions(params: DiscoverTvParams) {
     return queryOptions({
@@ -103,7 +121,93 @@ export function discoverTvOptions(params: DiscoverTvParams) {
     });
 }
 export const useDiscoverTv = (params: DiscoverTvParams) =>
-    useQuery(discoverTvOptions(params));
+    useSuspenseQuery(discoverTvOptions(params));
+
+type ListKeyBuilder<TParams, TCategory extends string> = (
+    category: TCategory,
+    params: TParams
+) => readonly unknown[];
+
+function createListOptions<
+    TParams extends object,
+    TData,
+    TCategory extends string,
+>(
+    fetcher: (params: TParams) => Promise<TData>,
+    category: TCategory,
+    keyBuilder: ListKeyBuilder<TParams, TCategory>
+) {
+    return (params: TParams = {} as TParams) =>
+        queryOptions({
+            queryFn: () => fetcher(params),
+            queryKey: keyBuilder(category, params),
+            staleTime: LIST_STALE_TIME,
+        });
+}
+
+export const nowPlayingMoviesOptions = createListOptions(
+    (params: MovieListParams) => getNowPlayingMoviesFn({ data: params }),
+    "now-playing",
+    tmdbKeys.movieList
+);
+export const useNowPlayingMovies = (params: MovieListParams = {}) =>
+    useSuspenseQuery(nowPlayingMoviesOptions(params));
+
+export const popularMoviesOptions = createListOptions(
+    (params: MovieListParams) => getPopularMoviesFn({ data: params }),
+    "popular",
+    tmdbKeys.movieList
+);
+export const usePopularMovies = (params: MovieListParams = {}) =>
+    useSuspenseQuery(popularMoviesOptions(params));
+
+export const topRatedMoviesOptions = createListOptions(
+    (params: MovieListParams) => getTopRatedMoviesFn({ data: params }),
+    "top-rated",
+    tmdbKeys.movieList
+);
+export const useTopRatedMovies = (params: MovieListParams = {}) =>
+    useSuspenseQuery(topRatedMoviesOptions(params));
+
+export const upcomingMoviesOptions = createListOptions(
+    (params: MovieListParams) => getUpcomingMoviesFn({ data: params }),
+    "upcoming",
+    tmdbKeys.movieList
+);
+export const useUpcomingMovies = (params: MovieListParams = {}) =>
+    useSuspenseQuery(upcomingMoviesOptions(params));
+
+export const airingTodayTvOptions = createListOptions(
+    (params: TvListParams) => getAiringTodayTvFn({ data: params }),
+    "airing-today",
+    tmdbKeys.tvList
+);
+export const useAiringTodayTv = (params: TvListParams = {}) =>
+    useSuspenseQuery(airingTodayTvOptions(params));
+
+export const onTheAirTvOptions = createListOptions(
+    (params: TvListParams) => getOnTheAirTvFn({ data: params }),
+    "on-the-air",
+    tmdbKeys.tvList
+);
+export const useOnTheAirTv = (params: TvListParams = {}) =>
+    useSuspenseQuery(onTheAirTvOptions(params));
+
+export const popularTvOptions = createListOptions(
+    (params: TvListParams) => getPopularTvFn({ data: params }),
+    "popular",
+    tmdbKeys.tvList
+);
+export const usePopularTv = (params: TvListParams = {}) =>
+    useSuspenseQuery(popularTvOptions(params));
+
+export const topRatedTvOptions = createListOptions(
+    (params: TvListParams) => getTopRatedTvFn({ data: params }),
+    "top-rated",
+    tmdbKeys.tvList
+);
+export const useTopRatedTv = (params: TvListParams = {}) =>
+    useSuspenseQuery(topRatedTvOptions(params));
 
 export function personDetailsOptions(personId: number) {
     return queryOptions({
@@ -113,7 +217,7 @@ export function personDetailsOptions(personId: number) {
     });
 }
 export const usePersonDetails = (personId: number) =>
-    useQuery(personDetailsOptions(personId));
+    useSuspenseQuery(personDetailsOptions(personId));
 
 export function personCreditsOptions(personId: number) {
     return queryOptions({
@@ -123,7 +227,7 @@ export function personCreditsOptions(personId: number) {
     });
 }
 export const usePersonCredits = (personId: number) =>
-    useQuery(personCreditsOptions(personId));
+    useSuspenseQuery(personCreditsOptions(personId));
 
 export function configurationOptions() {
     return queryOptions({
@@ -132,4 +236,4 @@ export function configurationOptions() {
         staleTime: Number.POSITIVE_INFINITY, // fetch once per session, effectively static
     });
 }
-export const useConfiguration = () => useQuery(configurationOptions());
+export const useConfiguration = () => useSuspenseQuery(configurationOptions());

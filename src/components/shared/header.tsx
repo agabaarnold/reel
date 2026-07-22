@@ -1,5 +1,6 @@
 import { IconMovie } from "@tabler/icons-react";
 import { Link, type LinkOptions } from "@tanstack/react-router";
+import SearchBar from "./search-bar";
 import { ThemeToggle } from "./theme-toggle";
 
 interface Nav {
@@ -42,7 +43,8 @@ const Header = () => (
                 </div>
             </div>
 
-            <div className="">
+            <div className="flex items-center gap-2">
+                <SearchBar />
                 <ThemeToggle />
             </div>
         </div>
