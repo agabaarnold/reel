@@ -69,10 +69,10 @@ const PosterImage = ({
                 imageVariant.aspectRatio,
                 className
             )}
-            height={513}
+            height={imageVariant.height}
             loading="lazy"
             src={src}
-            width={342}
+            width={imageVariant.width}
         />
     );
 };
