@@ -1,4 +1,4 @@
-import { IconPhotoOff } from "@tabler/icons-react";
+import { IconPhotoOff, IconStarFilled } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { buildImageUrl } from "#/schema/configuration";
@@ -107,7 +107,9 @@ const FeaturedCarousel = ({
     }, [api, featuredMedia.length]);
 
     if (isLoading) {
-        return <Skeleton className="h-[clamp(18rem,60vw,34rem)] w-full" />;
+        return (
+            <Skeleton className="h-[clamp(18rem,60vw,34rem)] w-full" />
+        );
     }
 
     if (isError || featuredMedia.length === 0) {
@@ -176,12 +178,25 @@ const FeaturedCarousel = ({
 
                                         <div className="absolute inset-0 flex items-end">
                                             <div className="max-w-3xl p-4 text-white sm:p-6 md:p-10">
-                                                <p className="text-[0.65rem] text-white/70 uppercase tracking-[0.28em] sm:text-xs">
-                                                    {item.media_type === "tv"
-                                                        ? "TV series"
-                                                        : "Movie"}{" "}
-                                                    • {year || "TBA"}
-                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-[0.65rem] text-white/70 uppercase tracking-[0.28em] sm:text-xs">
+                                                        {item.media_type ===
+                                                        "tv"
+                                                            ? "TV series"
+                                                            : "Movie"}{" "}
+                                                        • {year || "TBA"}
+                                                    </p>
+
+                                                    <span className="flex items-center gap-2 text-xs">
+                                                        <IconStarFilled
+                                                            aria-hidden="true"
+                                                            className="size-3 text-amber-500"
+                                                        />{" "}
+                                                        {item.vote_average.toFixed(
+                                                            1
+                                                        )}
+                                                    </span>
+                                                </div>
 
                                                 <h2 className="mt-2 font-semibold text-2xl sm:text-4xl md:text-5xl">
                                                     {item.media_type ===
