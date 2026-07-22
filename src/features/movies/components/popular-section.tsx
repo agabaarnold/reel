@@ -1,5 +1,5 @@
+import { MovieCard } from "#/features/home/components/media-cards";
 import { useDiscoverMovies } from "#/server/queries";
-import MovieCard from "./movie-card";
 import { TrendingCardSkeleton } from "./trending-section";
 
 const POPULAR_GRID_COUNT = 10;

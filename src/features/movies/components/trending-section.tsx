@@ -1,7 +1,7 @@
 import { Skeleton } from "#/components/ui/skeleton";
+import { MovieCard } from "#/features/home/components/media-cards";
 import type { TrendingItem } from "#/schema/trending";
 import { useTrending } from "#/server/queries";
-import MovieCard from "./movie-card";
 
 const TRENDING_CARD_COUNT = 6;
 

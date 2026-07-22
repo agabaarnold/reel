@@ -1,13 +1,14 @@
 import { IconStarFilled, IconUser } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import PosterImage from "#/components/shared/poster-image";
-import { releaseYear } from "#/lib/utils";
+import { cn, releaseYear } from "#/lib/utils";
 import type { MovieSummary } from "#/schema/movies";
 import type { PersonSummary } from "#/schema/person";
 import type { TvSummary } from "#/schema/tv";
 
 interface MovieCardProps {
     movie: MovieSummary;
+    width?: string;
 }
 
 interface TvCardProps {
@@ -33,10 +34,13 @@ function RatingAndYear({ rating, year }: { rating: number; year: string }) {
     );
 }
 
-export function MovieCard({ movie }: MovieCardProps) {
+export function MovieCard({ movie, width = "w-36 sm:w-40" }: MovieCardProps) {
     return (
         <Link
-            className="group w-36 shrink-0 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4 sm:w-40"
+            className={cn(
+                "group shrink-0 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4",
+                width
+            )}
             params={{ movieId: movie.id }}
             to="/movie/$movieId"
         >
