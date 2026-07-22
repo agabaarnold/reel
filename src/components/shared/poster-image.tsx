@@ -4,32 +4,55 @@ import { buildImageUrl } from "#/schema/configuration";
 import { useConfiguration } from "#/server/queries";
 import { Skeleton } from "../ui/skeleton";
 
-const POSTER_SIZE = "w342";
+const IMAGE_VARIANTS = {
+    poster: {
+        aspectRatio: "aspect-2/3",
+        size: "w342",
+    },
+    profile: {
+        aspectRatio: "aspect-square",
+        size: "w185",
+    },
+} as const;
 
 interface PosterImageProps {
     alt: string;
     className?: string;
     path: string | null;
+    variant?: keyof typeof IMAGE_VARIANTS;
 }
 
-const PosterImage = ({ alt, path, className }: PosterImageProps) => {
+const PosterImage = ({
+    alt,
+    path,
+    className,
+    variant = "poster",
+}: PosterImageProps) => {
     const { data: config, isLoading } = useConfiguration();
+    const imageVariant = IMAGE_VARIANTS[variant];
 
     if (isLoading) {
         return (
             <Skeleton
-                className={cn("aspect-2/3 w-full rounded-lg", className)}
+                className={cn(
+                    imageVariant.aspectRatio,
+                    "w-full rounded-lg",
+                    className
+                )}
             />
         );
     }
 
-    const src = config ? buildImageUrl(config.images, path, POSTER_SIZE) : null;
+    const src = config
+        ? buildImageUrl(config.images, path, imageVariant.size)
+        : null;
 
     if (!src) {
         return (
             <div
                 className={cn(
-                    "flex aspect-2/3 w-full items-center justify-center rounded-lg bg-muted text-muted-foreground",
+                    "flex w-full items-center justify-center rounded-lg bg-muted text-muted-foreground",
+                    imageVariant.aspectRatio,
                     className
                 )}
             >
@@ -42,7 +65,8 @@ const PosterImage = ({ alt, path, className }: PosterImageProps) => {
         <img
             alt={alt}
             className={cn(
-                "rouded-lg aspect-2/3 w-full object-cover",
+                "w-full rounded-lg object-cover",
+                imageVariant.aspectRatio,
                 className
             )}
             height={513}

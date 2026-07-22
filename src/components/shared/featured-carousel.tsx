@@ -1,4 +1,5 @@
 import { IconPhotoOff } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { buildImageUrl } from "#/schema/configuration";
 import type { TrendingItem, TrendingResponse } from "#/schema/trending";
@@ -183,7 +184,33 @@ const FeaturedCarousel = ({
                                                 </p>
 
                                                 <h2 className="mt-2 font-semibold text-2xl sm:text-4xl md:text-5xl">
-                                                    {title}
+                                                    {item.media_type ===
+                                                    "movie" ? (
+                                                        <Link
+                                                            className="hover:text-primary-foreground/80 focus-visible:outline-2 focus-visible:outline-primary-foreground"
+                                                            params={{
+                                                                movieId: String(
+                                                                    item.id
+                                                                ),
+                                                            }}
+                                                            to="/movie/$movieId"
+                                                        >
+                                                            {title}
+                                                        </Link>
+                                                    ) : (
+                                                        <Link
+                                                            className="hover:text-primary-foreground/80 focus-visible:outline-2 focus-visible:outline-primary-foreground"
+                                                            params={{
+                                                                seriesId:
+                                                                    String(
+                                                                        item.id
+                                                                    ),
+                                                            }}
+                                                            to="/tv/$seriesId"
+                                                        >
+                                                            {title}
+                                                        </Link>
+                                                    )}
                                                 </h2>
 
                                                 <p className="mt-3 line-clamp-3 max-w-2xl text-sm text-white/80 sm:text-base">
