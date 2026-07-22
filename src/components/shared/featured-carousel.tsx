@@ -189,9 +189,8 @@ const FeaturedCarousel = ({
                                                         <Link
                                                             className="hover:text-primary-foreground/80 focus-visible:outline-2 focus-visible:outline-primary-foreground"
                                                             params={{
-                                                                movieId: String(
-                                                                    item.id
-                                                                ),
+                                                                movieId:
+                                                                    item.id,
                                                             }}
                                                             to="/movie/$movieId"
                                                         >
@@ -202,9 +201,7 @@ const FeaturedCarousel = ({
                                                             className="hover:text-primary-foreground/80 focus-visible:outline-2 focus-visible:outline-primary-foreground"
                                                             params={{
                                                                 seriesId:
-                                                                    String(
-                                                                        item.id
-                                                                    ),
+                                                                    item.id,
                                                             }}
                                                             to="/tv/$seriesId"
                                                         >
