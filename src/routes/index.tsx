@@ -2,18 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import FeaturedCarousel from "#/components/shared/featured-carousel";
 import { ContentRow } from "#/features/home/components/content-row";
-import {
-    MovieCard,
-    PersonCard,
-    TvCard,
-} from "#/features/home/components/media-cards";
+import { MovieCard, TvCard } from "#/features/home/components/media-cards";
 import {
     airingTodayTvOptions,
     configurationOptions,
     nowPlayingMoviesOptions,
     onTheAirTvOptions,
     popularMoviesOptions,
-    popularPeopleOptions,
     popularTvOptions,
     topRatedMoviesOptions,
     topRatedTvOptions,
@@ -23,7 +18,6 @@ import {
     useNowPlayingMovies,
     useOnTheAirTv,
     usePopularMovies,
-    usePopularPeople,
     usePopularTv,
     useTopRatedMovies,
     useTopRatedTv,
@@ -59,7 +53,6 @@ export const Route = createFileRoute("/")({
             queryClient.prefetchQuery(onTheAirTvOptions()),
             queryClient.prefetchQuery(popularTvOptions()),
             queryClient.prefetchQuery(topRatedTvOptions()),
-            queryClient.prefetchQuery(popularPeopleOptions()),
         ]);
     },
     validateSearch: homeSearchSchema,
@@ -72,15 +65,14 @@ function Home() {
         page,
         time_window: timeWindow,
     });
-    const { data: nowPlayingMovies } = useNowPlayingMovies();
+    const { data: trendingMovies } = useNowPlayingMovies();
     const { data: popularMovies } = usePopularMovies();
     const { data: topRatedMovies } = useTopRatedMovies();
     const { data: upcomingMovies } = useUpcomingMovies();
-    const { data: airingTodayTv } = useAiringTodayTv();
-    const { data: onTheAirTv } = useOnTheAirTv();
+    const { data: airingToday } = useAiringTodayTv();
+    const { data: onTheAir } = useOnTheAirTv();
     const { data: popularTv } = usePopularTv();
     const { data: topRatedTv } = useTopRatedTv();
-    const { data: popularPeople } = usePopularPeople();
 
     const trending = data.results;
 
@@ -91,50 +83,53 @@ function Home() {
                 isLoading={isLoading}
                 media={trending}
             />
+
             <div className="mx-auto flex max-w-7xl flex-col gap-12 px-4 py-12 sm:px-6 lg:px-8">
                 <ContentRow id="now-playing" title="Now Playing">
-                    {nowPlayingMovies.results.slice(0, 12).map((movie) => (
+                    {trendingMovies.results.slice(0, 12).map((movie) => (
                         <MovieCard key={movie.id} movie={movie} />
                     ))}
                 </ContentRow>
+
                 <ContentRow id="popular-movies" title="Popular Movies">
                     {popularMovies.results.slice(0, 12).map((movie) => (
                         <MovieCard key={movie.id} movie={movie} />
                     ))}
                 </ContentRow>
+
                 <ContentRow id="top-rated-movies" title="Top Rated Movies">
                     {topRatedMovies.results.slice(0, 12).map((movie) => (
                         <MovieCard key={movie.id} movie={movie} />
                     ))}
                 </ContentRow>
+
                 <ContentRow id="upcoming-movies" title="Upcoming Movies">
                     {upcomingMovies.results.slice(0, 12).map((movie) => (
                         <MovieCard key={movie.id} movie={movie} />
                     ))}
                 </ContentRow>
+
                 <ContentRow id="airing-today" title="Airing Today">
-                    {airingTodayTv.results.slice(0, 12).map((series) => (
+                    {airingToday.results.slice(0, 12).map((series) => (
                         <TvCard key={series.id} series={series} />
                     ))}
                 </ContentRow>
-                <ContentRow id="on-the-air" title="On the Air">
-                    {onTheAirTv.results.slice(0, 12).map((series) => (
+
+                <ContentRow id="on-the-air" title="On The Air">
+                    {onTheAir.results.slice(0, 12).map((series) => (
                         <TvCard key={series.id} series={series} />
                     ))}
                 </ContentRow>
-                <ContentRow id="popular-tv" title="Popular TV Shows">
+
+                <ContentRow id="popular-series" title="Popular Series">
                     {popularTv.results.slice(0, 12).map((series) => (
                         <TvCard key={series.id} series={series} />
                     ))}
                 </ContentRow>
-                <ContentRow id="top-rated-tv" title="Top Rated TV Shows">
+
+                <ContentRow id="top-rated-series" title="Top Rated Series">
                     {topRatedTv.results.slice(0, 12).map((series) => (
                         <TvCard key={series.id} series={series} />
-                    ))}
-                </ContentRow>
-                <ContentRow id="popular-people" title="Popular People">
-                    {popularPeople.results.slice(0, 12).map((person) => (
-                        <PersonCard key={person.id} person={person} />
                     ))}
                 </ContentRow>
             </div>
