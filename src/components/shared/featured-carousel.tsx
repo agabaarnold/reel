@@ -16,6 +16,7 @@ import { Skeleton } from "../ui/skeleton";
 const BACKDROP_HEIGHT = 720;
 const BACKDROP_SIZE = "w1280";
 const BACKDROP_WIDTH = 1280;
+const AUTOPLAY_DELAY_MS = 10_000;
 
 type FeaturedMedia = Extract<TrendingItem, { media_type: "movie" | "tv" }>;
 
@@ -92,6 +93,18 @@ const FeaturedCarousel = ({
         };
     }, [api]);
 
+    useEffect(() => {
+        if (!(api && featuredMedia.length > 1)) {
+            return;
+        }
+
+        const autoplayInterval = window.setInterval(() => {
+            api.scrollNext();
+        }, AUTOPLAY_DELAY_MS);
+
+        return () => window.clearInterval(autoplayInterval);
+    }, [api, featuredMedia.length]);
+
     if (isLoading) {
         return <Skeleton className="h-[clamp(18rem,60vw,34rem)] w-full" />;
     }
@@ -126,17 +139,28 @@ const FeaturedCarousel = ({
                                 className="basis-full"
                                 key={`${item.media_type}-${item.id}`}
                             >
-                                <article className="relative overflow-hidden rounded-3xl border bg-zinc-950 shadow-2xl">
-                                    <div className="relative aspect-4/5 sm:aspect-16/10 md:aspect-video">
+                                <article className="relative overflow-hidden border bg-zinc-950 shadow-2xl">
+                                    <div className="relative h-[calc(100svh-7rem)] min-h-72">
                                         {backdropUrl ? (
-                                            <img
-                                                alt={`Backdrop for ${title}`}
-                                                className="absolute inset-0 h-full w-full object-cover"
-                                                height={BACKDROP_HEIGHT}
-                                                sizes="(min-width: 768px) 100vw, 100vw"
-                                                src={backdropUrl}
-                                                width={BACKDROP_WIDTH}
-                                            />
+                                            <>
+                                                <img
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    className="absolute inset-0 h-full w-full scale-110 object-cover opacity-90 blur-2xl"
+                                                    height={BACKDROP_HEIGHT}
+                                                    sizes="100vw"
+                                                    src={backdropUrl}
+                                                    width={BACKDROP_WIDTH}
+                                                />
+                                                <img
+                                                    alt={`Backdrop for ${title}`}
+                                                    className="absolute inset-0 h-full w-full object-contain"
+                                                    height={BACKDROP_HEIGHT}
+                                                    sizes="100vw"
+                                                    src={backdropUrl}
+                                                    width={BACKDROP_WIDTH}
+                                                />
+                                            </>
                                         ) : (
                                             <div className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground">
                                                 <IconPhotoOff aria-hidden="true" />
@@ -180,7 +204,7 @@ const FeaturedCarousel = ({
 
             <fieldset className="mt-4 flex justify-center gap-2">
                 <legend className="sr-only">Choose a featured title</legend>
-                
+
                 {featuredMedia.map((item, index) => (
                     <CarouselIndicator
                         api={api}
