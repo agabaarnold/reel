@@ -39,6 +39,7 @@ const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+const SIDEBAR_MENU_SKELETON_WIDTH = "70%";
 
 interface SidebarContextProps {
     isMobile: boolean;
@@ -609,9 +610,6 @@ function SidebarMenuSkeleton({
 }: ComponentProps<"div"> & {
     showIcon?: boolean;
 }) {
-    // Random width between 50 to 90%.
-    const [width] = useState(() => `${Math.floor(Math.random() * 40) + 50}%`);
-
     return (
         <div
             {...props}
@@ -633,7 +631,7 @@ function SidebarMenuSkeleton({
                 data-sidebar="menu-skeleton-text"
                 style={
                     {
-                        "--skeleton-width": width,
+                        "--skeleton-width": SIDEBAR_MENU_SKELETON_WIDTH,
                     } as CSSProperties
                 }
             />
