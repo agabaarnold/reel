@@ -1,9 +1,11 @@
-import { IconArrowLeft, IconExternalLink, IconStarFilled } from "@tabler/icons-react";
+import {
+    IconArrowLeft,
+    IconExternalLink,
+    IconStarFilled,
+} from "@tabler/icons-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import PosterImage from "#/components/shared/poster-image";
-import { MovieCard } from "#/features/home/components/media-cards";
-import { ContentRow } from "#/features/home/components/content-row";
 import { Badge } from "#/components/ui/badge";
 import {
     Card,
@@ -12,6 +14,8 @@ import {
     CardHeader,
     CardTitle,
 } from "#/components/ui/card";
+import { ContentRow } from "#/features/home/components/content-row";
+import { MovieCard } from "#/features/home/components/media-cards";
 import { releaseYear } from "#/lib/utils";
 import { buildImageUrl } from "#/schema/configuration";
 import type { MovieDetails } from "#/schema/movies";
@@ -65,7 +69,10 @@ function MovieVideos({ movie }: { movie: MovieDetails }) {
 
     return (
         <section aria-labelledby="videos-heading">
-            <h2 className="mb-4 font-heading font-semibold text-2xl" id="videos-heading">
+            <h2
+                className="mb-4 font-heading font-semibold text-2xl"
+                id="videos-heading"
+            >
                 Videos
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -84,10 +91,17 @@ function MovieVideos({ movie }: { movie: MovieDetails }) {
                             target="_blank"
                         >
                             <span>
-                                <span className="block font-medium">{video.name}</span>
-                                <span className="text-muted-foreground">{video.type}</span>
+                                <span className="block font-medium">
+                                    {video.name}
+                                </span>
+                                <span className="text-muted-foreground">
+                                    {video.type}
+                                </span>
                             </span>
-                            <IconExternalLink aria-hidden="true" className="size-4 shrink-0" />
+                            <IconExternalLink
+                                aria-hidden="true"
+                                className="size-4 shrink-0"
+                            />
                         </a>
                     );
                 })}
@@ -105,9 +119,9 @@ function MovieDetailsPage() {
         movie.backdrop_path,
         "w1280"
     );
-    const regionProviders = Object.values(
+    const [regionProviders] = Object.values(
         movie["watch/providers"]?.results ?? {}
-    )[0];
+    );
     const providers = [
         ...(regionProviders?.flatrate ?? []),
         ...(regionProviders?.free ?? []),
@@ -131,7 +145,9 @@ function MovieDetailsPage() {
                         alt=""
                         aria-hidden="true"
                         className="absolute inset-0 h-full w-full object-cover opacity-15"
+                        height={720}
                         src={backdropUrl}
+                        width={1280}
                     />
                 ) : null}
                 <div className="relative shrink-0 md:w-72">
@@ -157,7 +173,8 @@ function MovieDetailsPage() {
                                 aria-hidden="true"
                                 className="size-4 text-amber-500"
                             />
-                            {movie.vote_average.toFixed(1)} from {movie.vote_count} ratings
+                            {movie.vote_average.toFixed(1)} from{" "}
+                            {movie.vote_count} ratings
                         </CardDescription>
                         <div className="flex flex-wrap gap-2">
                             {movie.genres.map((genre) => (
@@ -169,7 +186,8 @@ function MovieDetailsPage() {
                     </CardHeader>
                     <CardContent>
                         <p className="leading-7">
-                            {movie.overview || "No overview is available for this movie."}
+                            {movie.overview ||
+                                "No overview is available for this movie."}
                         </p>
                     </CardContent>
                 </div>
@@ -177,7 +195,10 @@ function MovieDetailsPage() {
 
             {movie.credits?.cast.length ? (
                 <section aria-labelledby="cast-heading" className="mt-12">
-                    <h2 className="mb-4 font-heading font-semibold text-2xl" id="cast-heading">
+                    <h2
+                        className="mb-4 font-heading font-semibold text-2xl"
+                        id="cast-heading"
+                    >
                         Cast
                     </h2>
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
@@ -194,8 +215,12 @@ function MovieDetailsPage() {
                                     path={person.profile_path}
                                     variant="profile"
                                 />
-                                <p className="mt-2 truncate font-medium text-sm">{person.name}</p>
-                                <p className="truncate text-muted-foreground text-xs">{person.character}</p>
+                                <p className="mt-2 truncate font-medium text-sm">
+                                    {person.name}
+                                </p>
+                                <p className="truncate text-muted-foreground text-xs">
+                                    {person.character}
+                                </p>
                             </Link>
                         ))}
                     </div>
@@ -203,13 +228,22 @@ function MovieDetailsPage() {
             ) : null}
 
             {providers.length ? (
-                <section aria-labelledby="where-to-watch-heading" className="mt-12">
-                    <h2 className="mb-4 font-heading font-semibold text-2xl" id="where-to-watch-heading">
+                <section
+                    aria-labelledby="where-to-watch-heading"
+                    className="mt-12"
+                >
+                    <h2
+                        className="mb-4 font-heading font-semibold text-2xl"
+                        id="where-to-watch-heading"
+                    >
                         Where to watch
                     </h2>
                     <div className="flex flex-wrap gap-2">
                         {providers.map((provider) => (
-                            <Badge key={provider.provider_id} variant="secondary">
+                            <Badge
+                                key={provider.provider_id}
+                                variant="secondary"
+                            >
                                 {provider.provider_name}
                             </Badge>
                         ))}
@@ -223,10 +257,18 @@ function MovieDetailsPage() {
 
             {movie.recommendations?.results.length ? (
                 <div className="mt-12">
-                    <ContentRow id="movie-recommendations" title="You may also like">
-                        {movie.recommendations.results.slice(0, 12).map((recommendation) => (
-                            <MovieCard key={recommendation.id} movie={recommendation} />
-                        ))}
+                    <ContentRow
+                        id="movie-recommendations"
+                        title="You may also like"
+                    >
+                        {movie.recommendations.results
+                            .slice(0, 12)
+                            .map((recommendation) => (
+                                <MovieCard
+                                    key={recommendation.id}
+                                    movie={recommendation}
+                                />
+                            ))}
                     </ContentRow>
                 </div>
             ) : null}
