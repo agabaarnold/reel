@@ -122,15 +122,19 @@ function TvDetailsPage() {
         series.backdrop_path,
         "w1280"
     );
-    const [regionProviders] = Object.values(
-        series["watch/providers"]?.results ?? {}
+    const providerRegions = series["watch/providers"]?.results ?? {};
+    const regionProviders =
+        providerRegions.US ?? Object.values(providerRegions)[0];
+    const providers = Array.from(
+        new Map(
+            [
+                ...(regionProviders?.flatrate ?? []),
+                ...(regionProviders?.free ?? []),
+                ...(regionProviders?.rent ?? []),
+                ...(regionProviders?.buy ?? []),
+            ].map((provider) => [provider.provider_id, provider])
+        ).values()
     );
-    const providers = [
-        ...(regionProviders?.flatrate ?? []),
-        ...(regionProviders?.free ?? []),
-        ...(regionProviders?.rent ?? []),
-        ...(regionProviders?.buy ?? []),
-    ];
 
     return (
         <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
