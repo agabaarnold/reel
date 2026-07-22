@@ -25,6 +25,7 @@ function RatingAndYear({ rating, year }: { rating: number; year: string }) {
                 aria-hidden="true"
                 className="size-3 text-amber-500"
             />
+
             <span>{rating.toFixed(1)}</span>
             <span aria-hidden="true">&middot;</span>
             <span>{year}</span>
@@ -36,7 +37,7 @@ export function MovieCard({ movie }: MovieCardProps) {
     return (
         <Link
             className="group w-36 shrink-0 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4 sm:w-40"
-            params={{ movieId: String(movie.id) }}
+            params={{ movieId: movie.id }}
             to="/movie/$movieId"
         >
             <PosterImage
@@ -44,9 +45,11 @@ export function MovieCard({ movie }: MovieCardProps) {
                 className="transition-transform duration-200 group-hover:scale-[1.02]"
                 path={movie.poster_path}
             />
+
             <p className="mt-2 truncate font-medium text-sm group-hover:text-primary">
                 {movie.title}
             </p>
+
             <RatingAndYear
                 rating={movie.vote_average}
                 year={releaseYear(movie.release_date)}
@@ -59,7 +62,7 @@ export function TvCard({ series }: TvCardProps) {
     return (
         <Link
             className="group w-36 shrink-0 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4 sm:w-40"
-            params={{ seriesId: String(series.id) }}
+            params={{ seriesId: series.id }}
             to="/tv/$seriesId"
         >
             <PosterImage
@@ -67,9 +70,11 @@ export function TvCard({ series }: TvCardProps) {
                 className="transition-transform duration-200 group-hover:scale-[1.02]"
                 path={series.poster_path}
             />
+
             <p className="mt-2 truncate font-medium text-sm group-hover:text-primary">
                 {series.name}
             </p>
+
             <RatingAndYear
                 rating={series.vote_average}
                 year={releaseYear(series.first_air_date)}
@@ -82,7 +87,7 @@ export function PersonCard({ person }: PersonCardProps) {
     return (
         <Link
             className="group w-28 shrink-0 text-center focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4 sm:w-32"
-            params={{ personId: String(person.id) }}
+            params={{ personId: person.id }}
             to="/person/$personId"
         >
             <PosterImage
@@ -91,9 +96,11 @@ export function PersonCard({ person }: PersonCardProps) {
                 path={person.profile_path}
                 variant="profile"
             />
+
             <p className="mt-2 truncate font-medium text-sm group-hover:text-primary">
                 {person.name}
             </p>
+
             <p className="flex items-center justify-center gap-1 truncate text-muted-foreground text-xs">
                 <IconUser aria-hidden="true" className="size-3" />
                 {person.known_for_department}
