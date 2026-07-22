@@ -2,7 +2,6 @@ import { IconPhotoOff } from "@tabler/icons-react";
 import { cn } from "#/lib/utils";
 import { buildImageUrl } from "#/schema/configuration";
 import { useConfiguration } from "#/server/queries";
-import { Skeleton } from "../ui/skeleton";
 
 const IMAGE_VARIANTS = {
     poster: {
@@ -28,20 +27,8 @@ const PosterImage = ({
     className,
     variant = "poster",
 }: PosterImageProps) => {
-    const { data: config, isLoading } = useConfiguration();
+    const { data: config } = useConfiguration();
     const imageVariant = IMAGE_VARIANTS[variant];
-
-    if (isLoading) {
-        return (
-            <Skeleton
-                className={cn(
-                    imageVariant.aspectRatio,
-                    "w-full rounded-lg",
-                    className
-                )}
-            />
-        );
-    }
 
     const src = config
         ? buildImageUrl(config.images, path, imageVariant.size)
