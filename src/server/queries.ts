@@ -3,7 +3,11 @@ import type { DiscoverMovieParams, DiscoverTvParams } from "#/schema/discover";
 import type { MovieDetailsParams, MovieListParams } from "#/schema/movies";
 import type { SearchParams } from "#/schema/search";
 import type { TrendingParams } from "#/schema/trending";
-import type { TvDetailsParams, TvListParams } from "#/schema/tv";
+import type {
+    TvDetailsParams,
+    TvListParams,
+    TvSeasonDetailsParams,
+} from "#/schema/tv";
 import {
     discoverMoviesFn,
     discoverTvFn,
@@ -20,6 +24,7 @@ import {
     getTopRatedTvFn,
     getTrendingFn,
     getTvDetailsFn,
+    getTvSeasonDetailsFn,
     getUpcomingMoviesFn,
     searchMultiFn,
 } from "./tmdb-server";
@@ -58,6 +63,8 @@ export const tmdbKeys = {
         category: "airing-today" | "on-the-air" | "popular" | "top-rated",
         params: TvListParams
     ) => [...tmdbKeys.all, "tv-list", category, params] as const,
+    tvSeason: (params: TvSeasonDetailsParams) =>
+        [...tmdbKeys.all, "tv-season", params] as const,
 };
 
 const LIST_STALE_TIME = 30 * 60 * 1000;
@@ -102,6 +109,16 @@ export function tvDetailsOptions(params: TvDetailsParams) {
 }
 export const useTvDetails = (params: TvDetailsParams) =>
     useSuspenseQuery(tvDetailsOptions(params));
+
+export function tvSeasonDetailsOptions(params: TvSeasonDetailsParams) {
+    return queryOptions({
+        queryFn: () => getTvSeasonDetailsFn({ data: params }),
+        queryKey: tmdbKeys.tvSeason(params),
+        staleTime: 24 * 60 * 60 * 1000,
+    });
+}
+export const useTvSeasonDetails = (params: TvSeasonDetailsParams) =>
+    useSuspenseQuery(tvSeasonDetailsOptions(params));
 
 export function discoverMoviesOptions(params: DiscoverMovieParams) {
     return queryOptions({
