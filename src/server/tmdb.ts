@@ -13,6 +13,10 @@ import {
     discoverTvResponseSchema,
 } from "#/schema/discover";
 import {
+    type GenreListResponse,
+    genreListResponseSchema,
+} from "#/schema/genres";
+import {
     type MovieDetails,
     type MovieDetailsParams,
     type MovieListParams,
@@ -105,6 +109,10 @@ export const tmdbApi = {
         });
     },
 
+    getMovieGenres(): Promise<GenreListResponse> {
+        return get(genreListResponseSchema, "/genre/movie/list");
+    },
+
     getMovieList(
         category: "now_playing" | "popular" | "top_rated" | "upcoming",
         params: MovieListParams
@@ -147,6 +155,10 @@ export const tmdbApi = {
                 "credits,videos,recommendations,similar,watch/providers",
             language: p.language,
         });
+    },
+
+    getTvGenres(): Promise<GenreListResponse> {
+        return get(genreListResponseSchema, "/genre/tv/list");
     },
 
     getTvList(

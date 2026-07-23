@@ -43,7 +43,7 @@ export const personDetailsParamsSchema = baseParamsSchema.extend({
 });
 export type PersonDetailsParams = z.infer<typeof personDetailsParamsSchema>;
 
-const creditWithMediaTypeSchema = z.object({
+export const creditWithMediaTypeSchema = z.object({
     character: z.string().optional(),
     department: z.string().optional(),
     first_air_date: z.string().optional(),

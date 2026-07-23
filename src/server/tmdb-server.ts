@@ -6,6 +6,7 @@ import {
     discoverTvParamsSchema,
     discoverTvResponseSchema,
 } from "#/schema/discover";
+import { genreListResponseSchema } from "#/schema/genres";
 import {
     movieDetailsParamsSchema,
     movieDetailsSchema,
@@ -167,6 +168,22 @@ export const discoverTvFn = createServerFn({ method: "GET", strict: false })
         const result = await tmdbApi.discoverTv(data);
         return discoverTvResponseSchema.parse(result);
     });
+
+export const getMovieGenresFn = createServerFn({
+    method: "GET",
+    strict: false,
+}).handler(async () => {
+    const result = await tmdbApi.getMovieGenres();
+    return genreListResponseSchema.parse(result);
+});
+
+export const getTvGenresFn = createServerFn({
+    method: "GET",
+    strict: false,
+}).handler(async () => {
+    const result = await tmdbApi.getTvGenres();
+    return genreListResponseSchema.parse(result);
+});
 
 export const getPersonDetailsFn = createServerFn({
     method: "GET",
