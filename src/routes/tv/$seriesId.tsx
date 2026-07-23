@@ -11,7 +11,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardHeader,
     CardTitle,
 } from "#/components/ui/card";
 import { ContentRow } from "#/features/home/components/content-row";
@@ -146,59 +145,69 @@ function TvDetailsPage() {
                 Back to home
             </Link>
 
-            <Card className="relative mt-6 overflow-hidden md:flex-row">
+            <section
+                aria-labelledby="series-title"
+                className="relative mt-6 min-h-[34rem] overflow-hidden rounded-2xl bg-card ring-1 ring-foreground/10"
+            >
                 {backdropUrl ? (
                     <img
                         alt=""
                         aria-hidden="true"
-                        className="absolute inset-0 h-full w-full object-cover opacity-15"
+                        className="absolute inset-0 h-full w-full object-cover"
                         height={720}
                         src={backdropUrl}
                         width={1280}
                     />
                 ) : null}
-                <div className="relative shrink-0 md:w-72">
-                    <PosterImage
-                        alt={`Poster for ${series.name}`}
-                        className="rounded-none md:rounded-l-xl"
-                        path={series.poster_path}
-                    />
-                </div>
-                <div className="relative flex flex-1 flex-col justify-center">
-                    <CardHeader className="gap-3">
+                <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/45" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-background/20" />
+
+                <div className="relative flex min-h-[34rem] flex-col justify-end gap-8 p-6 sm:p-10 md:flex-row md:items-end md:justify-start md:gap-10 lg:p-14">
+                    <div className="w-40 shrink-0 sm:w-52 md:w-64">
+                        <PosterImage
+                            alt={`Poster for ${series.name}`}
+                            className="shadow-2xl"
+                            path={series.poster_path}
+                        />
+                    </div>
+                    <div className="max-w-3xl pb-1">
+                        <Badge className="mb-4" variant="secondary">
+                            TV series
+                        </Badge>
                         <SeriesMeta series={series} />
-                        <CardTitle className="text-3xl sm:text-4xl">
+                        <h1
+                            className="mt-4 font-heading font-semibold text-4xl tracking-tight sm:text-5xl lg:text-6xl"
+                            id="series-title"
+                        >
                             {series.name}
-                        </CardTitle>
+                        </h1>
                         {series.tagline ? (
-                            <CardDescription className="text-base italic">
+                            <p className="mt-3 text-lg text-muted-foreground italic">
                                 {series.tagline}
-                            </CardDescription>
+                            </p>
                         ) : null}
-                        <CardDescription className="flex items-center gap-1">
+                        <p className="mt-4 flex items-center gap-1 text-muted-foreground text-sm">
                             <IconStarFilled
                                 aria-hidden="true"
                                 className="size-4 text-amber-500"
                             />
                             {series.vote_average.toFixed(1)} from{" "}
                             {series.vote_count} ratings
-                        </CardDescription>
-                        <div className="flex flex-wrap gap-2">
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
                             {series.genres.map((genre) => (
                                 <Badge key={genre.id} variant="outline">
                                     {genre.name}
                                 </Badge>
                             ))}
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="leading-7">
+                        <p className="mt-6 max-w-2xl text-muted-foreground leading-7">
                             {series.overview ||
                                 "No overview is available for this TV series."}
                         </p>
                         {series.homepage ? (
                             <a
-                                className="mt-4 inline-flex items-center gap-2 text-primary text-sm hover:underline"
+                                className="mt-5 inline-flex items-center gap-2 text-primary text-sm hover:underline"
                                 href={series.homepage}
                                 rel="noopener noreferrer"
                                 target="_blank"
@@ -210,9 +219,9 @@ function TvDetailsPage() {
                                 />
                             </a>
                         ) : null}
-                    </CardContent>
+                    </div>
                 </div>
-            </Card>
+            </section>
 
             {series.credits?.cast.length ? (
                 <section aria-labelledby="cast-heading" className="mt-12">
@@ -258,26 +267,33 @@ function TvDetailsPage() {
                     </h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {series.seasons.map((season) => (
-                            <Card
-                                className="flex-row overflow-hidden py-0"
+                            <Link
+                                className="block"
                                 key={season.id}
+                                params={{
+                                    seasonNumber: season.season_number,
+                                    seriesId: series.id,
+                                }}
+                                to="/tv/$seriesId/season/$seasonNumber"
                             >
-                                <PosterImage
-                                    alt={`Poster for ${season.name}`}
-                                    className="h-32 w-24 rounded-none object-cover"
-                                    path={season.poster_path}
-                                />
-                                <CardContent className="p-4">
-                                    <CardTitle>{season.name}</CardTitle>
-                                    <CardDescription className="mt-1">
-                                        {season.episode_count} episodes
-                                    </CardDescription>
-                                    <p className="mt-2 line-clamp-2 text-muted-foreground text-xs">
-                                        {season.overview ||
-                                            "No overview available."}
-                                    </p>
-                                </CardContent>
-                            </Card>
+                                <Card className="flex-row overflow-hidden py-0 transition-colors hover:bg-muted">
+                                    <PosterImage
+                                        alt={`Poster for ${season.name}`}
+                                        className="h-32 w-24 rounded-none object-cover"
+                                        path={season.poster_path}
+                                    />
+                                    <CardContent className="p-4">
+                                        <CardTitle>{season.name}</CardTitle>
+                                        <CardDescription className="mt-1">
+                                            {season.episode_count} episodes
+                                        </CardDescription>
+                                        <p className="mt-2 line-clamp-2 text-muted-foreground text-xs">
+                                            {season.overview ||
+                                                "No overview available."}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         ))}
                     </div>
                 </section>

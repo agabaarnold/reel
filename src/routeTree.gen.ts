@@ -10,16 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as MovieIndexRouteImport } from './routes/movie/index'
 import { Route as MovieMovieIdRouteImport } from './routes/movie/$movieId'
 import { Route as PersonPersonIdRouteImport } from './routes/person/$personId'
 import { Route as TvIndexRouteImport } from './routes/tv/index'
 import { Route as TvSeriesIdRouteImport } from './routes/tv/$seriesId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as TvSeriesIdSeasonSeasonNumberRouteImport } from './routes/tv/$seriesId/season/$seasonNumber'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MovieIndexRoute = MovieIndexRouteImport.update({
@@ -52,70 +59,89 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TvSeriesIdSeasonSeasonNumberRoute =
+  TvSeriesIdSeasonSeasonNumberRouteImport.update({
+    id: '/season/$seasonNumber',
+    path: '/season/$seasonNumber',
+    getParentRoute: () => TvSeriesIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/search': typeof SearchRoute
   '/movie/$movieId': typeof MovieMovieIdRoute
   '/person/$personId': typeof PersonPersonIdRoute
-  '/tv/$seriesId': typeof TvSeriesIdRoute
+  '/tv/$seriesId': typeof TvSeriesIdRouteWithChildren
   '/movie/': typeof MovieIndexRoute
   '/tv/': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/tv/$seriesId/season/$seasonNumber': typeof TvSeriesIdSeasonSeasonNumberRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/search': typeof SearchRoute
   '/movie/$movieId': typeof MovieMovieIdRoute
   '/person/$personId': typeof PersonPersonIdRoute
-  '/tv/$seriesId': typeof TvSeriesIdRoute
+  '/tv/$seriesId': typeof TvSeriesIdRouteWithChildren
   '/movie': typeof MovieIndexRoute
   '/tv': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/tv/$seriesId/season/$seasonNumber': typeof TvSeriesIdSeasonSeasonNumberRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/search': typeof SearchRoute
   '/movie/$movieId': typeof MovieMovieIdRoute
   '/person/$personId': typeof PersonPersonIdRoute
-  '/tv/$seriesId': typeof TvSeriesIdRoute
+  '/tv/$seriesId': typeof TvSeriesIdRouteWithChildren
   '/movie/': typeof MovieIndexRoute
   '/tv/': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/tv/$seriesId/season/$seasonNumber': typeof TvSeriesIdSeasonSeasonNumberRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/search'
     | '/movie/$movieId'
     | '/person/$personId'
     | '/tv/$seriesId'
     | '/movie/'
     | '/tv/'
     | '/api/auth/$'
+    | '/tv/$seriesId/season/$seasonNumber'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/search'
     | '/movie/$movieId'
     | '/person/$personId'
     | '/tv/$seriesId'
     | '/movie'
     | '/tv'
     | '/api/auth/$'
+    | '/tv/$seriesId/season/$seasonNumber'
   id:
     | '__root__'
     | '/'
+    | '/search'
     | '/movie/$movieId'
     | '/person/$personId'
     | '/tv/$seriesId'
     | '/movie/'
     | '/tv/'
     | '/api/auth/$'
+    | '/tv/$seriesId/season/$seasonNumber'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SearchRoute: typeof SearchRoute
   MovieMovieIdRoute: typeof MovieMovieIdRoute
   PersonPersonIdRoute: typeof PersonPersonIdRoute
-  TvSeriesIdRoute: typeof TvSeriesIdRoute
+  TvSeriesIdRoute: typeof TvSeriesIdRouteWithChildren
   MovieIndexRoute: typeof MovieIndexRoute
   TvIndexRoute: typeof TvIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -128,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/movie/': {
@@ -172,14 +205,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tv/$seriesId/season/$seasonNumber': {
+      id: '/tv/$seriesId/season/$seasonNumber'
+      path: '/season/$seasonNumber'
+      fullPath: '/tv/$seriesId/season/$seasonNumber'
+      preLoaderRoute: typeof TvSeriesIdSeasonSeasonNumberRouteImport
+      parentRoute: typeof TvSeriesIdRoute
+    }
   }
 }
 
+interface TvSeriesIdRouteChildren {
+  TvSeriesIdSeasonSeasonNumberRoute: typeof TvSeriesIdSeasonSeasonNumberRoute
+}
+
+const TvSeriesIdRouteChildren: TvSeriesIdRouteChildren = {
+  TvSeriesIdSeasonSeasonNumberRoute: TvSeriesIdSeasonSeasonNumberRoute,
+}
+
+const TvSeriesIdRouteWithChildren = TvSeriesIdRoute._addFileChildren(
+  TvSeriesIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SearchRoute: SearchRoute,
   MovieMovieIdRoute: MovieMovieIdRoute,
   PersonPersonIdRoute: PersonPersonIdRoute,
-  TvSeriesIdRoute: TvSeriesIdRoute,
+  TvSeriesIdRoute: TvSeriesIdRouteWithChildren,
   MovieIndexRoute: MovieIndexRoute,
   TvIndexRoute: TvIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
