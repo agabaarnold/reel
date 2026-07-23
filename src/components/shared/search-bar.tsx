@@ -1,10 +1,30 @@
 import { IconSearch } from "@tabler/icons-react";
+import { useNavigate } from "@tanstack/react-router";
+import { type ChangeEvent, type FormEvent, useCallback, useState } from "react";
 import { Input } from "../ui/input";
 
 const SearchBar = () => {
+    const navigate = useNavigate();
+    const [query, setQuery] = useState("");
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const trimmedQuery = query.trim();
+        await navigate({
+            search: { q: trimmedQuery },
+            to: "/search",
+        });
+    };
+    const handleQueryChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            setQuery(event.target.value);
+        },
+        []
+    );
+
     return (
-        <div className="">
-            {/* Decorative for now — wire this up to the /search route once it exists */}
+        <form aria-label="Search" onSubmit={handleSubmit}>
             <div className="relative max-w-sm">
                 <IconSearch
                     aria-hidden="true"
@@ -14,11 +34,13 @@ const SearchBar = () => {
                 <Input
                     aria-label="Search movies, shows, and people"
                     className="pl-8"
+                    onChange={handleQueryChange}
                     placeholder="Search movies, shows, people"
                     type="search"
+                    value={query}
                 />
             </div>
-        </div>
+        </form>
     );
 };
 
