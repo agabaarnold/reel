@@ -70,6 +70,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "deploy": "bun run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
     "post-cta-init": "bunx --bun create-db@latest --user-agent tanstack/tsrouter",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:push": "dotenv -e .env.local -- prisma db push",
