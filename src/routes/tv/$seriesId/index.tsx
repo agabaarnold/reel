@@ -29,7 +29,7 @@ const seriesParamsSchema = z.object({
     seriesId: z.coerce.number().int().positive(),
 });
 
-export const Route = createFileRoute("/tv/$seriesId")({
+export const Route = createFileRoute("/tv/$seriesId/")({
     component: TvDetailsPage,
     loader: async ({ context, params }) => {
         await Promise.all([
@@ -46,13 +46,17 @@ function SeriesMeta({ series }: { series: TvDetails }) {
     return (
         <div className="flex flex-wrap gap-2 text-muted-foreground text-sm">
             <Badge variant="secondary">{series.status}</Badge>
+
             <Badge variant="outline">
                 {releaseYear(series.first_air_date)}
             </Badge>
+
             <Badge variant="outline">{series.number_of_seasons} seasons</Badge>
+
             <Badge variant="outline">
                 {series.number_of_episodes} episodes
             </Badge>
+
             <Badge variant="outline">
                 {series.original_language.toUpperCase()}
             </Badge>
@@ -77,6 +81,7 @@ function SeriesVideos({ series }: { series: TvDetails }) {
             >
                 Videos
             </h2>
+
             <div className="grid gap-3 sm:grid-cols-2">
                 {videos.map((video) => {
                     const url =
@@ -96,10 +101,12 @@ function SeriesVideos({ series }: { series: TvDetails }) {
                                 <span className="block font-medium">
                                     {video.name}
                                 </span>
+
                                 <span className="text-muted-foreground">
                                     {video.type}
                                 </span>
                             </span>
+
                             <IconExternalLink
                                 aria-hidden="true"
                                 className="size-4 shrink-0"
@@ -147,7 +154,7 @@ function TvDetailsPage() {
 
             <section
                 aria-labelledby="series-title"
-                className="relative mt-6 min-h-[34rem] overflow-hidden rounded-2xl bg-card ring-1 ring-foreground/10"
+                className="relative mt-6 min-h-136 overflow-hidden rounded-2xl bg-card ring-1 ring-foreground/10"
             >
                 {backdropUrl ? (
                     <img
@@ -159,10 +166,10 @@ function TvDetailsPage() {
                         width={1280}
                     />
                 ) : null}
-                <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/45" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-background/20" />
+                <div className="absolute inset-0 bg-linear-to-r from-background via-background/90 to-background/45" />
+                <div className="absolute inset-0 bg-linear-to-t from-background/95 via-transparent to-background/20" />
 
-                <div className="relative flex min-h-[34rem] flex-col justify-end gap-8 p-6 sm:p-10 md:flex-row md:items-end md:justify-start md:gap-10 lg:p-14">
+                <div className="relative flex min-h-136 flex-col justify-end gap-8 p-6 sm:p-10 md:flex-row md:items-end md:justify-start md:gap-10 lg:p-14">
                     <div className="w-40 shrink-0 sm:w-52 md:w-64">
                         <PosterImage
                             alt={`Poster for ${series.name}`}
@@ -170,30 +177,37 @@ function TvDetailsPage() {
                             path={series.poster_path}
                         />
                     </div>
+
                     <div className="max-w-3xl pb-1">
                         <Badge className="mb-4" variant="secondary">
                             TV series
                         </Badge>
+
                         <SeriesMeta series={series} />
+
                         <h1
                             className="mt-4 font-heading font-semibold text-4xl tracking-tight sm:text-5xl lg:text-6xl"
                             id="series-title"
                         >
                             {series.name}
                         </h1>
+
                         {series.tagline ? (
                             <p className="mt-3 text-lg text-muted-foreground italic">
                                 {series.tagline}
                             </p>
                         ) : null}
+
                         <p className="mt-4 flex items-center gap-1 text-muted-foreground text-sm">
                             <IconStarFilled
                                 aria-hidden="true"
                                 className="size-4 text-amber-500"
                             />
+
                             {series.vote_average.toFixed(1)} from{" "}
                             {series.vote_count} ratings
                         </p>
+
                         <div className="mt-4 flex flex-wrap gap-2">
                             {series.genres.map((genre) => (
                                 <Badge key={genre.id} variant="outline">
@@ -201,10 +215,12 @@ function TvDetailsPage() {
                                 </Badge>
                             ))}
                         </div>
+
                         <p className="mt-6 max-w-2xl text-muted-foreground leading-7">
                             {series.overview ||
                                 "No overview is available for this TV series."}
                         </p>
+
                         {series.homepage ? (
                             <a
                                 className="mt-5 inline-flex items-center gap-2 text-primary text-sm hover:underline"
@@ -231,6 +247,7 @@ function TvDetailsPage() {
                     >
                         Cast
                     </h2>
+
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
                         {series.credits.cast.slice(0, 8).map((person) => (
                             <Link
@@ -263,12 +280,13 @@ function TvDetailsPage() {
                         className="mb-4 font-heading font-semibold text-2xl"
                         id="seasons-heading"
                     >
-                        Seasons
+                        Browse seasons
                     </h2>
+
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {series.seasons.map((season) => (
                             <Link
-                                className="block"
+                                className="block rounded-xl focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4"
                                 key={season.id}
                                 params={{
                                     seasonNumber: season.season_number,
@@ -282,15 +300,13 @@ function TvDetailsPage() {
                                         className="h-32 w-24 rounded-none object-cover"
                                         path={season.poster_path}
                                     />
+
                                     <CardContent className="p-4">
                                         <CardTitle>{season.name}</CardTitle>
+
                                         <CardDescription className="mt-1">
                                             {season.episode_count} episodes
                                         </CardDescription>
-                                        <p className="mt-2 line-clamp-2 text-muted-foreground text-xs">
-                                            {season.overview ||
-                                                "No overview available."}
-                                        </p>
                                     </CardContent>
                                 </Card>
                             </Link>
@@ -310,6 +326,7 @@ function TvDetailsPage() {
                     >
                         Where to watch
                     </h2>
+                    
                     <div className="flex flex-wrap gap-2">
                         {providers.map((provider) => (
                             <Badge
