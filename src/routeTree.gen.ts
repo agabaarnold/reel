@@ -10,9 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as GenresRouteImport } from './routes/genres'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as MovieIndexRouteImport } from './routes/movie/index'
 import { Route as MovieMovieIdRouteImport } from './routes/movie/$movieId'
+import { Route as PeopleIndexRouteImport } from './routes/people/index'
 import { Route as PersonPersonIdRouteImport } from './routes/person/$personId'
 import { Route as TvIndexRouteImport } from './routes/tv/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -22,6 +25,16 @@ import { Route as TvSeriesIdSeasonSeasonNumberRouteImport } from './routes/tv/$s
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoverRoute = DiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenresRoute = GenresRouteImport.update({
+  id: '/genres',
+  path: '/genres',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -37,6 +50,11 @@ const MovieIndexRoute = MovieIndexRouteImport.update({
 const MovieMovieIdRoute = MovieMovieIdRouteImport.update({
   id: '/movie/$movieId',
   path: '/movie/$movieId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeopleIndexRoute = PeopleIndexRouteImport.update({
+  id: '/people/',
+  path: '/people/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PersonPersonIdRoute = PersonPersonIdRouteImport.update({
@@ -68,10 +86,13 @@ const TvSeriesIdSeasonSeasonNumberRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/discover': typeof DiscoverRoute
+  '/genres': typeof GenresRoute
   '/search': typeof SearchRoute
   '/movie/$movieId': typeof MovieMovieIdRoute
   '/person/$personId': typeof PersonPersonIdRoute
   '/movie/': typeof MovieIndexRoute
+  '/people/': typeof PeopleIndexRoute
   '/tv/': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/tv/$seriesId/': typeof TvSeriesIdIndexRoute
@@ -79,10 +100,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/discover': typeof DiscoverRoute
+  '/genres': typeof GenresRoute
   '/search': typeof SearchRoute
   '/movie/$movieId': typeof MovieMovieIdRoute
   '/person/$personId': typeof PersonPersonIdRoute
   '/movie': typeof MovieIndexRoute
+  '/people': typeof PeopleIndexRoute
   '/tv': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/tv/$seriesId': typeof TvSeriesIdIndexRoute
@@ -91,10 +115,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/discover': typeof DiscoverRoute
+  '/genres': typeof GenresRoute
   '/search': typeof SearchRoute
   '/movie/$movieId': typeof MovieMovieIdRoute
   '/person/$personId': typeof PersonPersonIdRoute
   '/movie/': typeof MovieIndexRoute
+  '/people/': typeof PeopleIndexRoute
   '/tv/': typeof TvIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/tv/$seriesId/': typeof TvSeriesIdIndexRoute
@@ -104,10 +131,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/discover'
+    | '/genres'
     | '/search'
     | '/movie/$movieId'
     | '/person/$personId'
     | '/movie/'
+    | '/people/'
     | '/tv/'
     | '/api/auth/$'
     | '/tv/$seriesId/'
@@ -115,10 +145,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/discover'
+    | '/genres'
     | '/search'
     | '/movie/$movieId'
     | '/person/$personId'
     | '/movie'
+    | '/people'
     | '/tv'
     | '/api/auth/$'
     | '/tv/$seriesId'
@@ -126,10 +159,13 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/discover'
+    | '/genres'
     | '/search'
     | '/movie/$movieId'
     | '/person/$personId'
     | '/movie/'
+    | '/people/'
     | '/tv/'
     | '/api/auth/$'
     | '/tv/$seriesId/'
@@ -138,10 +174,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DiscoverRoute: typeof DiscoverRoute
+  GenresRoute: typeof GenresRoute
   SearchRoute: typeof SearchRoute
   MovieMovieIdRoute: typeof MovieMovieIdRoute
   PersonPersonIdRoute: typeof PersonPersonIdRoute
   MovieIndexRoute: typeof MovieIndexRoute
+  PeopleIndexRoute: typeof PeopleIndexRoute
   TvIndexRoute: typeof TvIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   TvSeriesIdIndexRoute: typeof TvSeriesIdIndexRoute
@@ -155,6 +194,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discover': {
+      id: '/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof DiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genres': {
+      id: '/genres'
+      path: '/genres'
+      fullPath: '/genres'
+      preLoaderRoute: typeof GenresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -176,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: '/movie/$movieId'
       fullPath: '/movie/$movieId'
       preLoaderRoute: typeof MovieMovieIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/people/': {
+      id: '/people/'
+      path: '/people'
+      fullPath: '/people/'
+      preLoaderRoute: typeof PeopleIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/person/$personId': {
@@ -218,10 +278,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DiscoverRoute: DiscoverRoute,
+  GenresRoute: GenresRoute,
   SearchRoute: SearchRoute,
   MovieMovieIdRoute: MovieMovieIdRoute,
   PersonPersonIdRoute: PersonPersonIdRoute,
   MovieIndexRoute: MovieIndexRoute,
+  PeopleIndexRoute: PeopleIndexRoute,
   TvIndexRoute: TvIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   TvSeriesIdIndexRoute: TvSeriesIdIndexRoute,
