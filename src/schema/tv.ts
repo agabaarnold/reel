@@ -44,6 +44,34 @@ export const tvSeasonSummarySchema = z.object({
 });
 export type TvSeasonSummary = z.infer<typeof tvSeasonSummarySchema>;
 
+export const tvEpisodeSchema = z.object({
+    air_date: z.string().nullable(),
+    episode_number: z.number(),
+    episode_type: z.string(),
+    id: z.number(),
+    name: z.string(),
+    overview: z.string(),
+    production_code: z.string(),
+    runtime: z.number().nullable(),
+    season_number: z.number(),
+    show_id: z.number(),
+    still_path: z.string().nullable(),
+    vote_average: z.number(),
+    vote_count: z.number(),
+});
+export type TvEpisode = z.infer<typeof tvEpisodeSchema>;
+
+export const tvSeasonDetailsSchema = z.object({
+    air_date: z.string().nullable(),
+    episodes: z.array(tvEpisodeSchema),
+    id: z.number(),
+    name: z.string(),
+    overview: z.string(),
+    poster_path: z.string().nullable(),
+    season_number: z.number(),
+});
+export type TvSeasonDetails = z.infer<typeof tvSeasonDetailsSchema>;
+
 export const tvDetailsSchema = z.object({
     adult: z.boolean(),
     backdrop_path: z.string().nullable(),
@@ -99,6 +127,13 @@ export const tvDetailsParamsSchema = baseParamsSchema.extend({
     series_id: z.number(),
 });
 export type TvDetailsParams = z.infer<typeof tvDetailsParamsSchema>;
+
+/** GET /tv/{series_id}/season/{season_number} */
+export const tvSeasonDetailsParamsSchema = baseParamsSchema.extend({
+    season_number: z.number().int().min(0),
+    series_id: z.number(),
+});
+export type TvSeasonDetailsParams = z.infer<typeof tvSeasonDetailsParamsSchema>;
 
 /** GET /tv/popular | /tv/top_rated | /tv/on_the_air | /tv/airing_today */
 export const tvListParamsSchema = baseParamsSchema.extend({

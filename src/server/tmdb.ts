@@ -49,10 +49,14 @@ import {
     type TvDetailsParams,
     type TvListParams,
     type TvListResponse,
+    type TvSeasonDetails,
+    type TvSeasonDetailsParams,
     tvDetailsParamsSchema,
     tvDetailsSchema,
     tvListParamsSchema,
     tvListResponseSchema,
+    tvSeasonDetailsParamsSchema,
+    tvSeasonDetailsSchema,
 } from "#/schema/tv";
 import {
     type WatchProviderListParams,
@@ -151,6 +155,17 @@ export const tmdbApi = {
     ): Promise<TvListResponse> {
         const p = tvListParamsSchema.parse(params);
         return get(tvListResponseSchema, `/tv/${category}`, p);
+    },
+
+    getTvSeasonDetails(
+        params: TvSeasonDetailsParams
+    ): Promise<TvSeasonDetails> {
+        const p = tvSeasonDetailsParamsSchema.parse(params);
+        return get(
+            tvSeasonDetailsSchema,
+            `/tv/${p.series_id}/season/${p.season_number}`,
+            { language: p.language }
+        );
     },
 
     getWatchProviderList(

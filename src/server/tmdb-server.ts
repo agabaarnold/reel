@@ -28,6 +28,8 @@ import {
     tvDetailsSchema,
     tvListParamsSchema,
     tvListResponseSchema,
+    tvSeasonDetailsParamsSchema,
+    tvSeasonDetailsSchema,
 } from "#/schema/tv";
 import { tmdbApi } from "./tmdb";
 
@@ -100,6 +102,16 @@ export const getTvDetailsFn = createServerFn({ method: "GET", strict: false })
     .handler(async ({ data }) => {
         const result = await tmdbApi.getTvDetails(data);
         return tvDetailsSchema.parse(result);
+    });
+
+export const getTvSeasonDetailsFn = createServerFn({
+    method: "GET",
+    strict: false,
+})
+    .validator((data: unknown) => tvSeasonDetailsParamsSchema.parse(data))
+    .handler(async ({ data }) => {
+        const result = await tmdbApi.getTvSeasonDetails(data);
+        return tvSeasonDetailsSchema.parse(result);
     });
 
 export const getAiringTodayTvFn = createServerFn({
