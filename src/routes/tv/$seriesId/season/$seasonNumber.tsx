@@ -79,30 +79,37 @@ function SeasonDetailsPage() {
                         path={season.poster_path}
                     />
                 </div>
+
                 <div>
                     <p className="font-medium text-muted-foreground text-sm uppercase tracking-wider">
                         TV series · season details
                     </p>
+
                     <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary">
                             Season {season.season_number}
                         </Badge>
+
                         {season.air_date ? (
                             <Badge variant="outline">
                                 {releaseYear(season.air_date)}
                             </Badge>
                         ) : null}
+
                         <Badge variant="outline">
                             {season.episodes.length} episodes
                         </Badge>
                     </div>
+
                     <h1 className="mt-3 font-heading font-semibold text-3xl">
                         {season.name}
                     </h1>
+
                     <p className="mt-4 text-muted-foreground leading-7">
                         {season.overview ||
                             "No overview is available for this season."}
                     </p>
+
                     {hasNextSeason ? (
                         <Link
                             className="mt-6 inline-flex items-center gap-2 font-medium text-primary text-sm hover:underline"
@@ -129,6 +136,7 @@ function SeasonDetailsPage() {
                 >
                     Episodes
                 </h2>
+
                 <div className="flex flex-col gap-4">
                     {season.episodes.map((episode) => (
                         <Card
@@ -150,6 +158,7 @@ function SeasonDetailsPage() {
                                     width={500}
                                 />
                             ) : null}
+
                             <CardContent className="flex-1 p-4">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <CardTitle>
@@ -161,15 +170,18 @@ function SeasonDetailsPage() {
                                         </CardDescription>
                                     ) : null}
                                 </div>
+
                                 <p className="mt-2 text-muted-foreground text-sm">
                                     {episode.overview ||
                                         "No overview is available for this episode."}
                                 </p>
+
                                 <p className="mt-3 flex items-center gap-1 text-muted-foreground text-xs">
                                     <IconStarFilled
                                         aria-hidden="true"
                                         className="size-3 text-amber-500"
                                     />
+                                    
                                     {episode.vote_average.toFixed(1)} (
                                     {episode.vote_count} ratings)
                                     {episode.runtime
