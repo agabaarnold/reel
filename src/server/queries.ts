@@ -1,5 +1,10 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import {
+    queryOptions,
+    useQuery,
+    useSuspenseQuery,
+} from "@tanstack/react-query";
 import type { DiscoverMovieParams, DiscoverTvParams } from "#/schema/discover";
+import type { GenreListResponse } from "#/schema/genres";
 import type { MovieDetailsParams, MovieListParams } from "#/schema/movies";
 import type { SearchParams } from "#/schema/search";
 import type { TrendingParams } from "#/schema/trending";
@@ -14,6 +19,7 @@ import {
     getAiringTodayTvFn,
     getConfigurationFn,
     getMovieDetailsFn,
+    getMovieGenresFn,
     getNowPlayingMoviesFn,
     getOnTheAirTvFn,
     getPersonCreditsFn,
@@ -24,6 +30,7 @@ import {
     getTopRatedTvFn,
     getTrendingFn,
     getTvDetailsFn,
+    getTvGenresFn,
     getTvSeasonDetailsFn,
     getUpcomingMoviesFn,
     searchMultiFn,
@@ -47,6 +54,7 @@ export const tmdbKeys = {
         [...tmdbKeys.all, "discover-tv", params] as const,
     movie: (params: MovieDetailsParams) =>
         [...tmdbKeys.all, "movie", params] as const,
+    movieGenres: () => [...tmdbKeys.all, "movie-genres"] as const,
     movieList: (
         category: "now-playing" | "popular" | "top-rated" | "upcoming",
         params: MovieListParams
@@ -59,6 +67,7 @@ export const tmdbKeys = {
     trending: (params: TrendingParams) =>
         [...tmdbKeys.all, "trending", params] as const,
     tv: (params: TvDetailsParams) => [...tmdbKeys.all, "tv", params] as const,
+    tvGenres: () => [...tmdbKeys.all, "tv-genres"] as const,
     tvList: (
         category: "airing-today" | "on-the-air" | "popular" | "top-rated",
         params: TvListParams
@@ -89,6 +98,13 @@ export function searchMultiOptions(params: SearchParams) {
 }
 export const useSearchMulti = (params: SearchParams) =>
     useSuspenseQuery(searchMultiOptions(params));
+
+export const useSearchSuggestions = (query: string) =>
+    useQuery({
+        ...searchMultiOptions({ query }),
+        enabled: query.length > 0,
+        staleTime: 5 * 60 * 1000,
+    });
 
 export function movieDetailsOptions(params: MovieDetailsParams) {
     return queryOptions({
@@ -139,6 +155,24 @@ export function discoverTvOptions(params: DiscoverTvParams) {
 }
 export const useDiscoverTv = (params: DiscoverTvParams) =>
     useSuspenseQuery(discoverTvOptions(params));
+
+export function movieGenresOptions() {
+    return queryOptions<GenreListResponse>({
+        queryFn: () => getMovieGenresFn(),
+        queryKey: tmdbKeys.movieGenres(),
+        staleTime: Number.POSITIVE_INFINITY,
+    });
+}
+export const useMovieGenres = () => useSuspenseQuery(movieGenresOptions());
+
+export function tvGenresOptions() {
+    return queryOptions<GenreListResponse>({
+        queryFn: () => getTvGenresFn(),
+        queryKey: tmdbKeys.tvGenres(),
+        staleTime: Number.POSITIVE_INFINITY,
+    });
+}
+export const useTvGenres = () => useSuspenseQuery(tvGenresOptions());
 
 type ListKeyBuilder<TParams, TCategory extends string> = (
     category: TCategory,
